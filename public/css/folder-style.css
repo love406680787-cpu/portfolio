@@ -1,0 +1,365 @@
+
+/* =========================================
+   Folder Gallery - 文件夹作品展示
+   ========================================= */
+
+/* 隐藏原有的 filter 按钮（文件夹自带分类） */
+.works-section .works-filter {
+    display: none;
+}
+
+/* 文件夹网格 */
+.folder-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+/* 单个文件夹 */
+.folder {
+    position: relative;
+    cursor: none;
+    perspective: 1000px;
+}
+
+/* 文件夹主体 - 关闭状态 */
+.folder-body {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/3;
+    border-radius: 16px 16px 12px 12px;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: bottom center;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 文件夹标签页（顶部小突起） */
+.folder-tab {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 20px;
+    border-radius: 10px 10px 4px 4px;
+    z-index: 2;
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 文件夹内部内容区 */
+.folder-inner {
+    position: absolute;
+    inset: 0;
+    padding: 16px 16px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(145deg, rgba(30,35,45,0.9), rgba(18,22,30,0.95));
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: inherit;
+}
+
+/* 文件夹图标（关闭状态显示） */
+.folder-icon {
+    font-size: 3.5rem;
+    line-height: 1;
+    opacity: 0.9;
+    transition: all 0.4s ease;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+}
+
+.folder-name {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    text-align: center;
+    margin-top: 4px;
+}
+
+.folder-count {
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+}
+
+/* ======== 文件夹颜色主题 ======== */
+
+/* 图片类 - 暖橙/珊瑚色 */
+.folder[data-category="image"] .folder-body,
+.folder[data-category="image"] .folder-tab {
+    background: linear-gradient(135deg, #ff6b4a, #ff8f70, #ffb088);
+}
+.folder[data-category="image"] .folder-inner {
+    background: linear-gradient(155deg, rgba(255,107,74,0.15), rgba(255,143,112,0.08), rgba(18,22,30,0.92));
+}
+.folder[data-category="image"] .folder-body {
+    border: 1px solid rgba(255, 135, 90, 0.4);
+    box-shadow:
+        0 8px 32px rgba(255, 107, 74, 0.15),
+        0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* 视频类 - 蓝紫色 */
+.folder[data-category="video"] .folder-body,
+.folder[data-category="video"] .folder-tab {
+    background: linear-gradient(135deg, #7c5cfc, #a78bfa, #c4b5fd);
+}
+.folder[data-category="video"] .folder-inner {
+    background: linear-gradient(155deg, rgba(124,92,252,0.15), rgba(167,139,250,0.08), rgba(18,22,30,0.92));
+}
+.folder[data-category="video"] .folder-body {
+    border: 1px solid rgba(140, 110, 255, 0.4);
+    box-shadow:
+        0 8px 32px rgba(124, 92, 252, 0.15),
+        0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* 默认/全部 - 荧光绿 */
+.folder[data-category="all"] .folder-body,
+.folder[data-category="all"] .folder-tab {
+    background: linear-gradient(135deg, #c8ff00, #d4ff33, #e0ff66);
+}
+.folder[data-category="all"] .folder-inner {
+    background: linear-gradient(155deg, rgba(200,255,0,0.12), rgba(212,255,51,0.06), rgba(18,22,30,0.92));
+}
+.folder[data-category="all"] .folder-body {
+    border: 1px solid rgba(200, 255, 0, 0.35);
+    box-shadow:
+        0 8px 32px rgba(200, 255, 0, 0.12),
+        0 2px 8px rgba(0, 0, 0, 0.25);
+}
+.folder[data-category="all"] .folder-name,
+.folder[data-category="all"] .folder-count {
+    color: var(--dark);
+}
+
+/* ======== Hover 打开动画 ======== */
+
+.folder:hover .folder-body {
+    transform: rotateX(-12deg) translateY(-8px) scale(1.03);
+    border-radius: 16px 16px 4px 4px;
+    box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.45),
+        0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.folder:hover .folder-tab {
+    top: -16px;
+    width: 70%;
+    border-radius: 12px 12px 6px 6px;
+}
+
+/* hover 时隐藏图标文字，显示作品列表 */
+.folder:hover .folder-icon,
+.folder:hover .folder-name,
+.folder:hover .folder-count {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+}
+
+/* 展开的作品列表面板 */
+.folder-contents {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 0;
+    overflow: hidden;
+    background: rgba(13, 17, 23, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 0 0 14px 14px;
+    transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                padding 0.5s ease;
+    padding: 0 12px;
+    z-index: 3;
+}
+
+.folder:hover .folder-contents {
+    max-height: 320px;
+    padding: 12px;
+    border: 1px solid var(--glass-border-hover);
+    border-top: none;
+}
+
+/* 作品缩略图列表 */
+.folder-items {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: all 0.4s ease 0.15s;
+}
+
+.folder:hover .folder-items {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 单个作品项 */
+.folder-item {
+    position: relative;
+    aspect-ratio: 4/3;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--dark-3);
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.folder-item:hover {
+    border-color: var(--accent);
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(200, 255, 0, 0.15);
+}
+
+.folder-item img,
+.folder-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.folder-item-video {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.folder-item:hover .folder-item-video {
+    opacity: 1;
+}
+
+.folder-item-video::after {
+    content: '';
+    width: 28px;
+    height: 28px;
+    border: 2px solid white;
+    border-radius: 50%;
+    position: relative;
+}
+.folder-item-video::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 55%;
+    transform: translate(-50%, -50%);
+    border-left: 9px solid white;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+}
+
+/* 无图占位 */
+.folder-item-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: var(--dark-3);
+}
+
+/* 作品标题提示 */
+.folder-item-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 6px 8px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    font-size: 0.65rem;
+    font-family: var(--font-display);
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.folder-item:hover .folder-item-title {
+    opacity: 1;
+}
+
+/* "查看更多" 提示 */
+.folder-more {
+    text-align: center;
+    padding: 8px 0 4px;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    opacity: 0;
+    transition: opacity 0.4s ease 0.3s;
+}
+
+.folder:hover .folder-more {
+    opacity: 1;
+}
+
+/* ======== 响应式 ======== */
+@media (max-width: 768px) {
+    .folder-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1.5rem;
+    }
+
+    /* 移动端点击展开而非 hover */
+    .folder.open .folder-body {
+        transform: rotateX(-12deg) translateY(-8px) scale(1.03);
+        border-radius: 16px 16px 4px 4px;
+        box-shadow:
+            0 24px 64px rgba(0, 0, 0, 0.45),
+            0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .folder.open .folder-tab {
+        top: -16px;
+        width: 70%;
+        border-radius: 12px 12px 6px 6px;
+    }
+
+    .folder.open .folder-icon,
+    .folder.open .folder-name,
+    .folder.open .folder-count {
+        opacity: 0;
+        transform: translateY(-10px);
+        pointer-events: none;
+    }
+
+    .folder.open .folder-contents {
+        max-height: 320px;
+        padding: 12px;
+        border: 1px solid var(--glass-border-hover);
+        border-top: none;
+    }
+
+    .folder.open .folder-items {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .folder.open .folder-more {
+        opacity: 1;
+    }
+}
