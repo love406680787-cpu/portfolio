@@ -1,5 +1,6 @@
 /**
  * Portfolio Main JS — Enhanced
+ * - Custom cursor
  * - Canvas particle background
  * - Hero text character reveal
  * - Magnetic hover effect
@@ -15,6 +16,52 @@
     // =========================================
     const DATA_URL = '../data/works.json';
     const PLACEHOLDER_EMOJIS = ['🎨', '✨', '🖼️', '📸', '🎬', '💡', '🌟', '🚀', '🎯', '🔮'];
+
+    // =========================================
+    // Custom Cursor
+    // =========================================
+    const cursorDot = document.getElementById('cursorDot');
+    const cursorRing = document.getElementById('cursorRing');
+    let mouseX = 0, mouseY = 0;
+    let ringX = 0, ringY = 0;
+
+    // Initialize cursor position off-screen
+    cursorDot.style.left = '-100px';
+    cursorDot.style.top = '-100px';
+    cursorRing.style.left = '-100px';
+    cursorRing.style.top = '-100px';
+
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        cursorDot.style.left = mouseX + 'px';
+        cursorDot.style.top = mouseY + 'px';
+        cursorDot.classList.add('visible');
+        cursorRing.classList.add('visible');
+    });
+
+    // Smooth ring follow
+    function animateRing() {
+        ringX += (mouseX - ringX) * 0.15;
+        ringY += (mouseY - ringY) * 0.15;
+        cursorRing.style.left = ringX + 'px';
+        cursorRing.style.top = ringY + 'px';
+        requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    // Hover effect on interactive elements
+    const hoverTargets = document.querySelectorAll('a, button, .work-card, .btn');
+    hoverTargets.forEach(el => {
+        el.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
+        el.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+    });
+
+    // Hide cursor when leaving window
+    document.addEventListener('mouseleave', () => {
+        cursorDot.classList.remove('visible');
+        cursorRing.classList.remove('visible');
+    });
 
     // =========================================
     // Scroll Progress Bar
