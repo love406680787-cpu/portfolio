@@ -269,45 +269,24 @@
     let lightboxIndex = 0;
 
     function loadWorks() {
-        // Try localStorage first, then fall back to JSON file
-        let worksData = null;
-        
-        // 1. Try localStorage
-        try {
-            const local = localStorage.getItem('portfolio_works');
-            if (local) {
-                worksData = JSON.parse(local);
-            }
-        } catch (e) {}
-        
-        // 2. Fall back to JSON file
-        if (!worksData) {
-            fetch(DATA_URL)
-                .then(res => res.ok ? res.json() : null)
-                .then(data => {
-                    if (data) {
-                        worksData = data;
-                        processWorksData();
-                    }
-                })
-                .catch(() => {});
-        } else {
-            processWorksData();
-        }
-        
-        function processWorksData() {
-            allWorks = worksData ? (worksData.works || []) : [];
-            document.getElementById('workCount').textContent = allWorks.length;
-            renderWorks(allWorks);
-            
-            if (allWorks.length === 0) {
+        fetch(DATA_URL)
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                allWorks = data ? (data.works || []) : [];
+                document.getElementById('workCount').textContent = allWorks.length;
+                renderWorks(allWorks);
+                if (allWorks.length === 0) {
+                    document.getElementById('worksGrid').style.display = 'none';
+                    document.getElementById('worksEmpty').style.display = 'block';
+                } else {
+                    document.getElementById('worksGrid').style.display = 'grid';
+                    document.getElementById('worksEmpty').style.display = 'none';
+                }
+            })
+            .catch(() => {
                 document.getElementById('worksGrid').style.display = 'none';
                 document.getElementById('worksEmpty').style.display = 'block';
-            } else {
-                document.getElementById('worksGrid').style.display = 'grid';
-                document.getElementById('worksEmpty').style.display = 'none';
-            }
-        }
+            });
     }
 
     function renderWorks(works) {
