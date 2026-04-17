@@ -98,6 +98,16 @@ img, video {
 }
 
 /* =========================================
+   Glass Variables
+   ========================================= */
+:root {
+    --glass-bg: rgba(13, 17, 23, 0.7);
+    --glass-bg-light: rgba(22, 27, 37, 0.6);
+    --glass-border: rgba(200, 255, 0, 0.08);
+    --glass-border-hover: rgba(200, 255, 0, 0.25);
+}
+
+/* =========================================
    Navigation
    ========================================= */
 .nav {
@@ -111,10 +121,11 @@ img, video {
 }
 
 .nav.scrolled {
-    background: rgba(10, 10, 11, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
 .nav-inner {
@@ -374,21 +385,44 @@ img, video {
     color: var(--dark);
 }
 
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 4px;
+}
+
 .btn-primary:hover {
     background: #d4ff20;
     transform: translateY(-2px);
-    box-shadow: 0 10px 40px rgba(200, 255, 0, 0.3);
+    box-shadow:
+        0 0 20px rgba(200, 255, 0, 0.5),
+        0 0 60px rgba(200, 255, 0, 0.2),
+        0 10px 40px rgba(200, 255, 0, 0.15);
+}
+
+.btn-primary:hover::before {
+    opacity: 1;
 }
 
 .btn-ghost {
     background: transparent;
     color: var(--text);
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .btn-ghost:hover {
     border-color: var(--accent);
     color: var(--accent);
+    box-shadow:
+        0 0 20px rgba(200, 255, 0, 0.15),
+        inset 0 0 20px rgba(200, 255, 0, 0.05);
+    background: rgba(200, 255, 0, 0.05);
 }
 
 .btn-sm {
@@ -617,8 +651,11 @@ img, video {
     font-weight: 500;
     letter-spacing: 0.1em;
     color: var(--text-dim);
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 50px;
+    background: rgba(13, 17, 23, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     transition: all var(--transition);
     cursor: none;
 }
@@ -628,6 +665,7 @@ img, video {
     color: var(--dark);
     background: var(--accent);
     border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(200, 255, 0, 0.3);
 }
 
 .works-grid {
@@ -640,13 +678,15 @@ img, video {
     position: relative;
     border-radius: 16px;
     overflow: hidden;
-    background: var(--dark-2);
-    border: 1px solid var(--border);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     cursor: none;
     opacity: 0;
     transform: translateY(40px);
     transition: all 0.6s var(--ease-out), transform 0.15s linear;
     will-change: transform;
+    backdrop-filter: blur(12px) saturate(1.3);
+    -webkit-backdrop-filter: blur(12px) saturate(1.3);
 }
 
 .work-card.visible {
@@ -655,7 +695,10 @@ img, video {
 }
 
 .work-card:hover {
-    border-color: var(--border-hover);
+    border-color: var(--glass-border-hover);
+    box-shadow:
+        0 0 30px rgba(200, 255, 0, 0.1),
+        0 20px 60px rgba(0, 0, 0, 0.4);
 }
 
 .work-card:hover .work-thumb img {
@@ -1015,16 +1058,18 @@ img, video {
     align-items: center;
     gap: 1rem;
     padding: 1rem 2.5rem;
-    border: 1px solid var(--border-hover);
+    border: 1px solid rgba(200, 255, 0, 0.2);
     border-radius: 50px;
     color: var(--accent);
     font-family: var(--font-display);
     font-size: 1rem;
     font-weight: 600;
-    transition: all var(--transition);
+    background: rgba(200, 255, 0, 0.04);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: all 0.8s var(--ease-out) 0.3s, background 0.3s, transform 0.3s, box-shadow 0.3s;
     opacity: 0;
     transform: translateY(20px);
-    transition: all 0.8s var(--ease-out) 0.3s, background 0.3s, transform 0.3s;
 }
 
 .contact-email.visible {
@@ -1036,6 +1081,10 @@ img, video {
     background: var(--accent);
     color: var(--dark);
     transform: scale(1.03);
+    box-shadow:
+        0 0 30px rgba(200, 255, 0, 0.4),
+        0 0 80px rgba(200, 255, 0, 0.15),
+        0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .email-icon {
@@ -1119,7 +1168,9 @@ img, video {
 .lightbox {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.95);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     z-index: 10000;
     display: flex;
     align-items: center;
@@ -1138,21 +1189,25 @@ img, video {
     position: absolute;
     top: 2rem;
     right: 2rem;
-    font-size: 2rem;
+    font-size: 1.5rem;
     color: var(--text-dim);
     width: 48px;
     height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 50%;
+    background: rgba(13, 17, 23, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     transition: all var(--transition);
 }
 
 .lightbox-close:hover {
     color: var(--accent);
-    border-color: var(--accent);
+    border-color: rgba(200, 255, 0, 0.3);
+    box-shadow: 0 0 20px rgba(200, 255, 0, 0.2);
 }
 
 .lightbox-nav {
@@ -1166,14 +1221,18 @@ img, video {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 50%;
+    background: rgba(13, 17, 23, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     transition: all var(--transition);
 }
 
 .lightbox-nav:hover {
     color: var(--accent);
-    border-color: var(--accent);
+    border-color: rgba(200, 255, 0, 0.3);
+    box-shadow: 0 0 20px rgba(200, 255, 0, 0.2);
 }
 
 .lightbox-prev { left: 2rem; }
