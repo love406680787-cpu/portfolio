@@ -1,12 +1,12 @@
 /**
- * Portfolio Main JS
- * - Loads works from data.json
- * - Handles scroll animations
- * - Lightbox for viewing works
- * - Custom cursor
- * - Navigation scroll effect
+ * Portfolio Main JS — Enhanced
+ * - Canvas particle background
+ * - Hero text character reveal
+ * - Magnetic hover effect
+ * - Parallax scroll
+ * - Scroll progress bar
+ * - Enhanced lightbox
  */
-
 (function() {
     'use strict';
 
@@ -17,35 +17,21 @@
     const PLACEHOLDER_EMOJIS = ['🎨', '✨', '🖼️', '📸', '🎬', '💡', '🌟', '🚀', '🎯', '🔮'];
 
     // =========================================
-    // Custom Cursor
+    // Scroll Progress Bar
     // =========================================
-    const cursorDot = document.getElementById('cursorDot');
-    const cursorRing = document.getElementById('cursorRing');
+    const progressBar = document.createElement('div');
+    progressBar.id = 'scrollProgress';
+    progressBar.style.cssText = `
+        position:fixed;top:0;left:0;height:2px;background:linear-gradient(to right, #00d4ff, #c8ff00);
+        z-index:10001;width:0%;transition:width 0.1s linear;pointer-events:none;
+    `;
+    document.body.appendChild(progressBar);
 
-    let mouseX = 0, mouseY = 0;
-    let ringX = 0, ringY = 0;
-
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        cursorDot.style.left = mouseX + 'px';
-        cursorDot.style.top = mouseY + 'px';
-    });
-
-    function animateRing() {
-        ringX += (mouseX - ringX) * 0.12;
-        ringY += (mouseY - ringY) * 0.12;
-        cursorRing.style.left = ringX + 'px';
-        cursorRing.style.top = ringY + 'px';
-        requestAnimationFrame(animateRing);
-    }
-    animateRing();
-
-    // Hover effect
-    const hoverTargets = document.querySelectorAll('a, button, .work-card, .filter-btn');
-    hoverTargets.forEach(el => {
-        el.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
-        el.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = pct + '%';
     });
 
     // =========================================
@@ -68,6 +54,123 @@
     });
 
     // =========================================
+    // Hero Text Character Reveal
+    // =========================================
+    function splitTextReveal(selector) {
+        const el = document.querySelector(selector);
+        if (!el) return;
+        const text = el.textContent;
+        el.innerHTML = '';
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+        [...text].forEach((char, i) => {
+            const span = document.createElement('span');
+            span.className = 'char';
+            span.textContent = char === ' ' ? '\u00A0' : char;
+            span.style.display = 'inline-block';
+            span.style.opacity = '0';
+            span.style.transform = 'translateY(60px) rotateX(-40deg)';
+            span.style.transition = `all 0.7s cubic-bezier(0.22, 1, 0.36, 1)`;
+            span.style.transitionDelay = `${i * 0.04}s`;
+            span.style.transformOrigin = 'bottom';
+            el.appendChild(span);
+        });
+        // Trigger after brief delay
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                el.querySelectorAll('.char').forEach(c => {
+                    c.style.opacity = '1';
+                    c.style.transform = 'translateY(0) rotateX(0)';
+                });
+            });
+        });
+    }
+
+    // =========================================
+    // Hero Counter Animation
+    // =========================================
+    function animateCounter(el, target, duration = 1500) {
+        let start = 0;
+        const startTime = performance.now();
+        function update(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.floor(eased * target);
+            if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+    }
+
+    // =========================================
+    // Hero Init (trigger on load)
+    // =========================================
+    function initHero() {
+        splitTextReveal('.hero-title');
+
+        const counterEl = document.getElementById('workCount');
+        if (counterEl) {
+            const target = parseInt(counterEl.textContent) || 0;
+            counterEl.textContent = '0';
+            setTimeout(() => animateCounter(counterEl, target), 800);
+        }
+
+        // Animate hero label
+        const heroLabel = document.querySelector('.hero-label');
+        if (heroLabel) {
+            setTimeout(() => heroLabel.classList.add('visible'), 200);
+        }
+
+        // Hero desc & actions
+        const heroDesc = document.querySelector('.hero-desc');
+        if (heroDesc) setTimeout(() => heroDesc.classList.add('visible'), 400);
+        const heroActions = document.querySelector('.hero-actions');
+        if (heroActions) setTimeout(() => heroActions.classList.add('visible'), 600);
+        const heroScroll = document.querySelector('.hero-scroll');
+        if (heroScroll) setTimeout(() => heroScroll.classList.add('visible'), 800);
+        const heroCounter = document.querySelector('.hero-counter');
+        if (heroCounter) setTimeout(() => heroCounter.classList.add('visible'), 900);
+    }
+
+    // =========================================
+    // Magnetic Button Effect
+    // =========================================
+    function initMagneticButtons() {
+        const buttons = document.querySelectorAll('.btn, .contact-email, .social-item');
+        buttons.forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = '';
+            });
+        });
+    }
+
+    // =========================================
+    // Parallax
+    // =========================================
+    function initParallax() {
+        const heroTitle = document.querySelector('.hero-title');
+        const heroGlows = document.querySelectorAll('.hero-glow');
+
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const heroH = document.querySelector('.hero')?.offsetHeight || 0;
+            if (scrollY < heroH) {
+                const p = scrollY / heroH;
+                if (heroTitle) heroTitle.style.transform = `translateY(${scrollY * 0.3}px)`;
+                heroGlows.forEach((g, i) => {
+                    g.style.transform = `translateY(${scrollY * (0.2 + i * 0.1)}px)`;
+                });
+            }
+        });
+    }
+
+    // =========================================
     // Scroll Animations
     // =========================================
     const observer = new IntersectionObserver((entries) => {
@@ -77,12 +180,8 @@
             }
         });
     }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    });
-
-    document.querySelectorAll('[data-scroll]').forEach(el => {
-        observer.observe(el);
+        threshold: 0.08,
+        rootMargin: '0px 0px -40px 0px'
     });
 
     // Stagger animation for work cards
@@ -91,6 +190,28 @@
         cards.forEach((card, index) => {
             card.style.transitionDelay = `${index * 0.08}s`;
             observer.observe(card);
+        });
+    }
+
+    document.querySelectorAll('[data-scroll]').forEach(el => {
+        observer.observe(el);
+    });
+
+    // =========================================
+    // Tilt Effect on Work Cards
+    // =========================================
+    function initCardTilt() {
+        const cards = document.querySelectorAll('.work-card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                card.style.transform = `translateY(-8px) perspective(800px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
         });
     }
 
@@ -173,6 +294,7 @@
             // Animate in
             setTimeout(() => {
                 card.classList.add('visible');
+                initCardTilt();
             }, index * 80);
         });
     }
@@ -196,7 +318,7 @@
     });
 
     // =========================================
-    // Lightbox
+    // Lightbox with animated entry
     // =========================================
     const lightbox = document.getElementById('lightbox');
     const lightboxContent = document.getElementById('lightboxContent');
@@ -215,19 +337,26 @@
     }
 
     function showLightboxItem(work) {
-        if (work.type === 'video') {
-            lightboxContent.innerHTML = `
-                <video src="${work.url}" controls autoplay style="max-width:90vw;max-height:85vh;border-radius:8px;"></video>
-            `;
-        } else {
-            lightboxContent.innerHTML = `<img src="${work.url}" alt="${work.title}">`;
-        }
+        lightboxContent.style.opacity = '0';
+        lightboxContent.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            if (work.type === 'video') {
+                lightboxContent.innerHTML = `
+                    <video src="${work.url}" controls autoplay style="max-width:90vw;max-height:85vh;border-radius:12px;box-shadow:0 40px 80px rgba(0,0,0,0.6);"></video>
+                `;
+            } else {
+                lightboxContent.innerHTML = `<img src="${work.url}" alt="${work.title}" style="border-radius:12px;box-shadow:0 40px 80px rgba(0,0,0,0.6);">`;
+            }
+            lightboxContent.style.opacity = '1';
+            lightboxContent.style.transform = 'scale(1)';
+        }, 150);
     }
 
     function closeLightbox() {
         lightbox.classList.remove('active');
         document.body.style.overflow = '';
-        lightboxContent.innerHTML = '';
+        lightboxContent.style.opacity = '0';
+        setTimeout(() => { lightboxContent.innerHTML = ''; }, 400);
     }
 
     function navigateLightbox(dir) {
@@ -251,11 +380,8 @@
     });
 
     // =========================================
-    // Init
-    // =========================================
-    loadWorks();
-
     // Smooth scroll for anchor links
+    // =========================================
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -265,5 +391,13 @@
             }
         });
     });
+
+    // =========================================
+    // Init
+    // =========================================
+    loadWorks();
+    initHero();
+    initMagneticButtons();
+    initParallax();
 
 })();
