@@ -1,11 +1,23 @@
 {
   "works": [
     {
-      "id": "1776420391167",
+      "id": "1776420446504",
       "title": "bblab",
       "description": "",
       "type": "image",
       "category": "品牌设计",
+      "year": "2026",
+      "url": "https://raw.githubusercontent.com/love406680787-cpu/PORTFOLIO/main/images/1776420443846___________.jpg",
+      "path": "images/1776420443846___________.jpg",
+      "filename": "1776420443846___________.jpg",
+      "addedAt": "2026-04-17T10:07:26.504Z"
+    },
+    {
+      "id": "1776420391167",
+      "title": "bblab",
+      "description": "",
+      "type": "image",
+      "category": "åçè®¾è®¡",
       "year": "2026",
       "url": "https://raw.githubusercontent.com/love406680787-cpu/PORTFOLIO/main/images/1776420389218_1.jpg",
       "path": "images/1776420389218_1.jpg",
@@ -17,7 +29,7 @@
       "title": "vaa",
       "description": "",
       "type": "image",
-      "category": "åçè®¾è®¡",
+      "category": "Ã¥ÂÂÃ§ÂÂÃ¨Â®Â¾Ã¨Â®Â¡",
       "year": "2026",
       "url": "https://raw.githubusercontent.com/love406680787-cpu/portfolio/main/images/1776418949453_____pack_beauty.png",
       "path": "images/1776418949453_____pack_beauty.png",
@@ -25,5 +37,5 @@
       "addedAt": "2026-04-17T09:42:32.557Z"
     }
   ],
-  "updated": "2026-04-17T10:06:31.167Z"
+  "updated": "2026-04-17T10:07:26.504Z"
 }
