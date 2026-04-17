@@ -1,5 +1,5 @@
 /**
- * Portfolio Main JS — Enhanced
+ * Portfolio Main JS �?Enhanced
  * - Custom cursor
  * - Canvas particle background
  * - Hero text character reveal
@@ -15,7 +15,7 @@
     // Config
     // =========================================
     const DATA_URL = '../data/works.json';
-    const PLACEHOLDER_EMOJIS = ['🎨', '✨', '🖼️', '📸', '🎬', '💡', '🌟', '🚀', '🎯', '🔮'];
+    const PLACEHOLDER_EMOJIS = ['🎨', '�?, '🖼�?, '📸', '🎬', '💡', '🌟', '🚀', '🎯', '🔮'];
 
     // =========================================
     // Custom Cursor
@@ -268,18 +268,45 @@
     let currentFilter = 'all';
     let lightboxIndex = 0;
 
-    async function loadWorks() {
+    function loadWorks() {
+        // Try localStorage first, then fall back to JSON file
+        let worksData = null;
+        
+        // 1. Try localStorage
         try {
-            const response = await fetch(DATA_URL);
-            if (!response.ok) throw new Error('Failed to load works');
-            const data = await response.json();
-            allWorks = data.works || [];
+            const local = localStorage.getItem('portfolio_works');
+            if (local) {
+                worksData = JSON.parse(local);
+            }
+        } catch (e) {}
+        
+        // 2. Fall back to JSON file
+        if (!worksData) {
+            fetch(DATA_URL)
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data) {
+                        worksData = data;
+                        processWorksData();
+                    }
+                })
+                .catch(() => {});
+        } else {
+            processWorksData();
+        }
+        
+        function processWorksData() {
+            allWorks = worksData ? (worksData.works || []) : [];
             document.getElementById('workCount').textContent = allWorks.length;
             renderWorks(allWorks);
-        } catch (err) {
-            console.warn('Could not load works:', err.message);
-            document.getElementById('worksGrid').style.display = 'none';
-            document.getElementById('worksEmpty').style.display = 'block';
+            
+            if (allWorks.length === 0) {
+                document.getElementById('worksGrid').style.display = 'none';
+                document.getElementById('worksEmpty').style.display = 'block';
+            } else {
+                document.getElementById('worksGrid').style.display = 'grid';
+                document.getElementById('worksEmpty').style.display = 'none';
+            }
         }
     }
 
@@ -311,7 +338,7 @@
                 <div class="work-thumb">
                     ${work.url ? thumbHTML : `<span class="work-thumb-placeholder">${emoji}</span>`}
                     <div class="work-overlay">
-                        <div class="work-overlay-icon">→</div>
+                        <div class="work-overlay-icon">�?/div>
                     </div>
                 </div>
                 <div class="work-info">
@@ -321,7 +348,7 @@
                 </div>
                 <div class="work-footer">
                     <span class="work-year">${work.year || ''}</span>
-                    <span class="work-arrow">↗</span>
+                    <span class="work-arrow">�?/span>
                 </div>
             `;
 
@@ -447,3 +474,4 @@
     initParallax();
 
 })();
+
