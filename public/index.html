@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的作品集</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Cursor follower -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo" id="navLogo">
+                <span class="logo-text">PORTFOLIO</span>
+            </a>
+            <div class="nav-links">
+                <a href="#works" class="nav-link">WORKS</a>
+                <a href="#about" class="nav-link">ABOUT</a>
+                <a href="#contact" class="nav-link">CONTACT</a>
+                <a href="admin.html" class="nav-link nav-admin">ADMIN</a>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu">
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-bg">
+            <div class="hero-grid"></div>
+            <div class="hero-glow hero-glow-1"></div>
+            <div class="hero-glow hero-glow-2"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-label" data-scroll>
+                <span class="label-line"></span>
+                <span class="label-text">视觉设计师 / 创意开发者</span>
+            </div>
+            <h1 class="hero-title" data-scroll>
+                <span class="title-line">Crafting</span>
+                <span class="title-line title-accent">Digital</span>
+                <span class="title-line">Experiences</span>
+            </h1>
+            <p class="hero-desc" data-scroll>
+                专注于视觉设计与交互体验，用创意代码构建独特的数字世界
+            </p>
+            <div class="hero-actions" data-scroll>
+                <a href="#works" class="btn btn-primary">
+                    <span>View Works</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+            </div>
+        </div>
+        <div class="hero-scroll" data-scroll>
+            <div class="scroll-indicator">
+                <div class="scroll-line"></div>
+            </div>
+            <span class="scroll-text">SCROLL</span>
+        </div>
+        <div class="hero-counter" data-scroll>
+            <span class="counter-num" id="workCount">0</span>
+            <span class="counter-label">WORKS</span>
+        </div>
+    </section>
+
+    <!-- Marquee -->
+    <section class="marquee-section">
+        <div class="marquee">
+            <div class="marquee-track">
+                <span>VISUAL DESIGN</span>
+                <span class="dot">●</span>
+                <span>INTERACTIVE</span>
+                <span class="dot">●</span>
+                <span>MOTION</span>
+                <span class="dot">●</span>
+                <span>CREATIVE CODE</span>
+                <span class="dot">●</span>
+                <span>VISUAL DESIGN</span>
+                <span class="dot">●</span>
+                <span>INTERACTIVE</span>
+                <span class="dot">●</span>
+                <span>MOTION</span>
+                <span class="dot">●</span>
+                <span>CREATIVE CODE</span>
+                <span class="dot">●</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Works Section -->
+    <section class="works-section" id="works">
+        <div class="section-header">
+            <div class="section-tag" data-scroll>
+                <span class="tag-num">02</span>
+                <span class="tag-text">SELECTED WORKS</span>
+            </div>
+            <h2 class="section-title" data-scroll>作品精选</h2>
+            <p class="section-desc" data-scroll>每一个项目都是精心打磨的创作，记录着从概念到落地的完整旅程</p>
+        </div>
+        <div class="works-filter" data-scroll>
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="image">图片</button>
+            <button class="filter-btn" data-filter="video">视频</button>
+        </div>
+        <div class="works-grid" id="worksGrid">
+            <!-- Works loaded from data.json -->
+        </div>
+        <div class="works-empty" id="worksEmpty" style="display:none;">
+            <div class="empty-icon">📂</div>
+            <p>暂无作品</p>
+            <a href="admin.html" class="btn btn-primary btn-sm">去上传作品</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="about-inner">
+            <div class="about-left">
+                <div class="section-tag" data-scroll>
+                    <span class="tag-num">03</span>
+                    <span class="tag-text">ABOUT ME</span>
+                </div>
+                <h2 class="section-title" data-scroll>关于我</h2>
+                <div class="about-text" data-scroll>
+                    <p>热爱视觉设计与创意编程，专注于创造独特的数字体验。拥有多年的设计经验，擅长从概念构思到最终落地的完整流程。</p>
+                    <p>我相信好的设计是形式与功能的完美结合，每一个像素、每一个动效都应该服务于用户体验。</p>
+                </div>
+                <div class="about-stats" data-scroll>
+                    <div class="stat-item">
+                        <span class="stat-num">5+</span>
+                        <span class="stat-label">Years Experience</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num">50+</span>
+                        <span class="stat-label">Projects</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num">20+</span>
+                        <span class="stat-label">Clients</span>
+                    </div>
+                </div>
+                <div class="about-skills" data-scroll>
+                    <span class="skill-pill">UI Design</span>
+                    <span class="skill-pill">Motion Design</span>
+                    <span class="skill-pill">Creative Coding</span>
+                    <span class="skill-pill">WebGL</span>
+                    <span class="skill-pill">Three.js</span>
+                    <span class="skill-pill">Figma</span>
+                </div>
+            </div>
+            <div class="about-right" data-scroll>
+                <div class="about-visual">
+                    <div class="visual-circle"></div>
+                    <div class="visual-lines">
+                        <div class="vline"></div>
+                        <div class="vline"></div>
+                        <div class="vline"></div>
+                    </div>
+                    <div class="visual-emoji">👨‍🎨</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="contact-inner">
+            <div class="section-tag" data-scroll>
+                <span class="tag-num">04</span>
+                <span class="tag-text">GET IN TOUCH</span>
+            </div>
+            <h2 class="contact-title" data-scroll>
+                Let's Create<br>Something <span class="title-accent">Amazing</span>
+            </h2>
+            <p class="contact-desc" data-scroll>
+                有想法或项目合作？随时联系我<br>期待与你的合作
+            </p>
+            <a href="mailto:hello@example.com" class="contact-email" data-scroll>
+                <span class="email-icon">✉</span>
+                <span class="email-text">hello@example.com</span>
+                <span class="email-arrow">→</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <span class="footer-logo">PORTFOLIO</span>
+                    <p class="footer-tagline">Crafting Digital Experiences</p>
+                </div>
+                <div class="footer-social">
+                    <a href="#" class="social-item">
+                        <span>GH</span>
+                    </a>
+                    <a href="#" class="social-item">
+                        <span>TW</span>
+                    </a>
+                    <a href="#" class="social-item">
+                        <span>IG</span>
+                    </a>
+                    <a href="#" class="social-item">
+                        <span>BE</span>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Portfolio. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose">×</button>
+        <button class="lightbox-nav lightbox-prev" id="lightboxPrev">←</button>
+        <button class="lightbox-nav lightbox-next" id="lightboxNext">→</button>
+        <div class="lightbox-content" id="lightboxContent"></div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
