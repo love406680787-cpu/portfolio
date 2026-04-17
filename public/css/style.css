@@ -43,7 +43,6 @@ body {
     background: var(--dark);
     color: var(--text);
     overflow-x: hidden;
-    cursor: none;
 }
 
 a {
@@ -52,7 +51,7 @@ a {
 }
 
 button {
-    cursor: none;
+    cursor: pointer;
     border: none;
     background: none;
     font-family: inherit;
@@ -61,40 +60,6 @@ button {
 img, video {
     max-width: 100%;
     display: block;
-}
-
-/* =========================================
-   Custom Cursor
-   ========================================= */
-.cursor-dot {
-    width: 6px;
-    height: 6px;
-    background: var(--accent);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 99999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s;
-    mix-blend-mode: difference;
-}
-
-.cursor-ring {
-    width: 36px;
-    height: 36px;
-    border: 1.5px solid rgba(200, 255, 0, 0.5);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 99998;
-    transform: translate(-50%, -50%);
-    transition: width 0.3s var(--ease-out), height 0.3s var(--ease-out), border-color 0.3s;
-}
-
-.cursor-ring.hover {
-    width: 60px;
-    height: 60px;
-    border-color: var(--accent);
 }
 
 /* =========================================
