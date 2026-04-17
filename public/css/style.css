@@ -319,6 +319,11 @@ img, video {
     line-height: 1;
     letter-spacing: -0.03em;
     margin-bottom: 2rem;
+    opacity: 0;
+}
+
+.hero-title.revealed {
+    opacity: 1;
 }
 
 .title-line {

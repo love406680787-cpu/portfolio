@@ -61,8 +61,6 @@
         if (!el) return;
         const text = el.textContent;
         el.innerHTML = '';
-        el.style.opacity = '1';
-        el.style.transform = 'none';
         [...text].forEach((char, i) => {
             const span = document.createElement('span');
             span.className = 'char';
@@ -78,6 +76,7 @@
         // Trigger after brief delay
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
+                el.classList.add('revealed');
                 el.querySelectorAll('.char').forEach(c => {
                     c.style.opacity = '1';
                     c.style.transform = 'translateY(0) rotateX(0)';
