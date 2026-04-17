@@ -313,11 +313,11 @@ img, video {
 }
 
 .hero-title {
-    font-family: var(--font-display);
-    font-size: clamp(3.5rem, 10vw, 9rem);
+    font-family: var(--font-body);
+    font-size: clamp(4rem, 12vw, 10rem);
     font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.03em;
+    line-height: 1.1;
+    letter-spacing: 0.05em;
     margin-bottom: 2rem;
     opacity: 0;
 }
