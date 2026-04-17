@@ -1,5 +1,5 @@
 /**
- * Portfolio Main JS �?Enhanced
+ * Portfolio Main JS - Enhanced
  * - Custom cursor
  * - Canvas particle background
  * - Hero text character reveal
@@ -15,7 +15,7 @@
     // Config
     // =========================================
     const DATA_URL = '../data/works.json';
-    const PLACEHOLDER_EMOJIS = ['🎨', '�?, '🖼�?, '📸', '🎬', '💡', '🌟', '🚀', '🎯', '🔮'];
+    const PLACEHOLDER_EMOJIS = ['\uD83C\uDFA8', '\u2708\uFE0F', '\uD83D\uDDBC\uFE0F', '\uD83D\uDDCF', '\uD83C\uDFA5', '\uD83D\uDCA1', '\u2728', '\uD83D\uDE80', '\uD83C\uDFAF', '\uD83D\uDD2E'];
 
     // =========================================
     // Custom Cursor
@@ -317,7 +317,7 @@
                 <div class="work-thumb">
                     ${work.url ? thumbHTML : `<span class="work-thumb-placeholder">${emoji}</span>`}
                     <div class="work-overlay">
-                        <div class="work-overlay-icon">�?/div>
+                        <div class="work-overlay-icon">\uD83D\uDD0D</div>
                     </div>
                 </div>
                 <div class="work-info">
@@ -327,7 +327,7 @@
                 </div>
                 <div class="work-footer">
                     <span class="work-year">${work.year || ''}</span>
-                    <span class="work-arrow">�?/span>
+                    <span class="work-arrow">\u2192</span>
                 </div>
             `;
 
