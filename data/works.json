@@ -1,6 +1,18 @@
 {
   "works": [
     {
+      "id": "1776651720965",
+      "title": "bblab",
+      "description": "",
+      "type": "image",
+      "category": "品牌设计",
+      "year": "2026",
+      "url": "https://cdn.jsdelivr.net/gh/love406680787-cpu/PORTFOLIO@main/images/1776651716252_0317.jpg",
+      "path": "images/1776651716252_0317.jpg",
+      "filename": "1776651716252_0317.jpg",
+      "addedAt": "2026-04-20T02:22:00.965Z"
+    },
+    {
       "id": "1776418952557",
       "title": "Pack Beauty",
       "description": "",
@@ -13,5 +25,5 @@
       "addedAt": "2026-04-17T09:42:32.557Z"
     }
   ],
-  "updated": "2026-04-20T02:15:00.000Z"
+  "updated": "2026-04-20T02:22:00.965Z"
 }
