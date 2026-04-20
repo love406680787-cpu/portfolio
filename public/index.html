@@ -398,17 +398,27 @@
             border-bottom: none;
         }
 
-        /* Works */
+        /* ==============================
+           WORKS Header + Filter
+           ============================== */
+        .works-header {
+            padding: 80px 48px 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
         .works-filter {
             display: flex;
-            gap: 12px;
-            margin-bottom: 48px;
+            gap: 8px;
         }
 
         .filter-btn {
-            padding: 10px 24px;
-            background: transparent;
-            border: 1px solid var(--border);
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
             color: var(--muted);
             font-size: 12px;
             font-weight: 500;
@@ -416,72 +426,187 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: var(--font-body);
+            border-radius: 100px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .filter-btn:hover,
         .filter-btn.active {
-            background: var(--fg);
-            color: var(--bg);
-            border-color: var(--fg);
+            background: rgba(255,255,255,0.1);
+            color: var(--fg);
+            border-color: rgba(255,255,255,0.2);
         }
 
-        .works-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-        }
-
-        @media (max-width: 768px) {
-            .works-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .work-item {
-            position: relative;
-            aspect-ratio: 16/10;
+        /* ==============================
+           LIQUID GLASS CARD (iOS style)
+           ============================== */
+        .glass-card {
+            /* iOS liquid glass */
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            /* Refraction shine top edge */
+            box-shadow:
+                0 0 0 0.5px rgba(255, 255, 255, 0.15) inset,
+                0 1px 0 0 rgba(255, 255, 255, 0.25) inset,
+                0 -1px 0 0 rgba(255, 255, 255, 0.05) inset,
+                0 20px 60px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(255, 255, 255, 0.03);
             overflow: hidden;
-            background: var(--card);
+            position: relative;
         }
 
-        .work-item img,
-        .work-item video {
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.4) 30%,
+                rgba(255, 255, 255, 0.4) 70%,
+                transparent 100%);
+        }
+
+        .glass-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%,
+                rgba(255, 255, 255, 0.06) 0%,
+                transparent 60%);
+            pointer-events: none;
+        }
+
+        /* ==============================
+           WORKS — Horizontal Scroll Cards
+           ============================== */
+        .works-pin-wrap {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .works-track {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            height: 100%;
+            padding: 0 48px;
+            gap: 32px;
+        }
+
+        .work-card {
+            flex: 0 0 auto;
+            width: min(480px, 80vw);
+            height: calc(100vh - 160px);
+            margin-top: 80px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .work-card-img {
+            flex: 1;
+            overflow: hidden;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .work-card-img img,
+        .work-card-img video {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .work-item:hover img,
-        .work-item:hover video {
-            transform: scale(1.05);
+        .work-card:hover .work-card-img img,
+        .work-card:hover .work-card-img video {
+            transform: scale(1.04);
         }
 
-        .work-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
+        .work-card-info {
+            padding: 20px 4px 8px;
             display: flex;
-            align-items: flex-end;
-            padding: 32px;
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
-        .work-item:hover .work-overlay {
-            opacity: 1;
-        }
-
-        .work-title {
-            font-size: 20px;
+        .work-card-title {
+            font-size: 18px;
             font-weight: 600;
-            margin-bottom: 4px;
+            letter-spacing: -0.01em;
         }
 
-        .work-category {
+        .work-card-cat {
             font-size: 12px;
             color: var(--muted);
-            letter-spacing: 0.1em;
+            letter-spacing: 0.05em;
+        }
+
+        /* Scroll hint */
+        .scroll-hint {
+            position: absolute;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .scroll-hint-icon {
+            display: flex;
+            gap: 4px;
+        }
+
+        .scroll-hint-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--muted);
+        }
+
+        .scroll-hint-text {
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        /* Progress dots */
+        .card-dots {
+            position: absolute;
+            bottom: 32px;
+            right: 48px;
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+        }
+
+        .card-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .card-dot.active {
+            background: var(--accent);
+            width: 20px;
+            border-radius: 3px;
         }
 
         /* Trust / Marquee */
@@ -774,8 +899,8 @@
     </section>
 
     <!-- Works -->
-    <section id="works">
-        <div class="section-inner">
+    <section class="works" id="works">
+        <div class="works-header">
             <div class="section-label">
                 <span class="section-num">3</span>
                 <span class="section-title">Featured Work</span>
@@ -785,7 +910,18 @@
                 <button class="filter-btn" data-filter="image">Images</button>
                 <button class="filter-btn" data-filter="video">Videos</button>
             </div>
-            <div class="works-grid" id="worksGrid"></div>
+        </div>
+        <div class="works-pin-wrap" id="worksPinWrap">
+            <div class="works-track" id="worksTrack"></div>
+            <div class="scroll-hint">
+                <div class="scroll-hint-icon">
+                    <div class="scroll-hint-dot"></div>
+                    <div class="scroll-hint-dot"></div>
+                    <div class="scroll-hint-dot"></div>
+                </div>
+                <span class="scroll-hint-text">Scroll to navigate</span>
+            </div>
+            <div class="card-dots" id="cardDots"></div>
         </div>
     </section>
 
@@ -1043,91 +1179,142 @@
             });
         });
 
-        // Filter Buttons
+        // ==============================
+        // WORKS — Horizontal Scroll Cards
+        // ==============================
+        const worksTrack = document.getElementById('worksTrack');
+        const cardDots = document.getElementById('cardDots');
+        let currentCard = 0;
+
+        function renderCards(items) {
+            if (!worksTrack) return;
+
+            if (items.length === 0) {
+                worksTrack.innerHTML = '<p style="color:var(--muted);padding:40px">No works in this category</p>';
+                cardDots.innerHTML = '';
+                return;
+            }
+
+            worksTrack.innerHTML = items.map(work => `
+                <div class="work-card glass-card">
+                    <div class="work-card-img">
+                        ${work.type === 'video'
+                            ? `<video src="${work.url}" muted loop playsinline></video>`
+                            : `<img src="${work.url}" alt="${work.title}" loading="lazy">`
+                        }
+                    </div>
+                    <div class="work-card-info">
+                        <div>
+                            <div class="work-card-title">${work.title}</div>
+                            <div class="work-card-cat">${work.category || ''}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Dots
+            cardDots.innerHTML = items.map((_, i) =>
+                `<div class="card-dot${i === 0 ? ' active' : ''}" data-card="${i}"></div>`
+            ).join('');
+
+            // Video hover
+            worksTrack.querySelectorAll('.work-card').forEach((card, i) => {
+                const video = card.querySelector('video');
+                if (video) {
+                    card.addEventListener('mouseenter', () => video.play());
+                    card.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+                }
+                card.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+                card.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+            });
+
+            // Animate in
+            gsap.from('.work-card', {
+                opacity: 0,
+                x: 60,
+                duration: 0.8,
+                stagger: 0.12,
+                ease: 'power2.out',
+                onComplete: initCardsScroll
+            });
+        }
+
+        function initCardsScroll() {
+            const cards = worksTrack.querySelectorAll('.work-card');
+            if (!cards.length) return;
+
+            const totalWidth = worksTrack.scrollWidth;
+            const wrap = document.getElementById('worksPinWrap');
+            const maxScroll = totalWidth - window.innerWidth + 96;
+
+            // Kill previous if any
+            ScrollTrigger.getAll().forEach(t => {
+                if (t.vars && t.vars.id === 'worksCards') t.kill();
+            });
+
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    id: 'worksCards',
+                    trigger: wrap,
+                    pin: true,
+                    scrub: 1.2,
+                    start: 'top top',
+                    end: () => `+=${maxScroll}`,
+                    onUpdate: (self) => {
+                        const progress = self.progress;
+                        const cardW = cards[0].offsetWidth + 32;
+                        const maxIdx = cards.length - 1;
+                        const targetCard = Math.round(progress * maxIdx);
+                        if (targetCard !== currentCard) {
+                            currentCard = targetCard;
+                            document.querySelectorAll('.card-dot').forEach((d, i) => {
+                                d.classList.toggle('active', i === currentCard);
+                            });
+                        }
+                    }
+                }
+            });
+
+            tl.to(worksTrack, {
+                x: -maxScroll,
+                ease: 'none'
+            });
+        }
+
+        function renderWorks(filter) {
+            let items = works;
+            if (filter !== 'all') items = works.filter(w => w.type === filter);
+            renderCards(items);
+        }
+
+        // Filter Buttons (pill style)
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                const filter = btn.dataset.filter;
-                renderWorks(filter);
+                renderWorks(btn.dataset.filter);
             });
         });
 
         // Load Works
         async function loadWorks() {
             try {
-                // Try localStorage first
                 const local = localStorage.getItem('portfolioWorks');
                 if (local) {
                     const data = JSON.parse(local);
                     if (data?.works?.length > 0) {
                         works = data.works;
-                        renderWorks('all');
+                        renderCards(works);
                         return;
                     }
                 }
-                
-                // Fallback to JSON
                 const res = await fetch('data/works.json?t=' + Date.now());
                 const data = await res.json();
                 works = data.works || [];
-                renderWorks('all');
+                renderCards(works);
             } catch (e) {
-                console.error('Failed to load works:', e);
-                worksGrid.innerHTML = '<p style="color:var(--muted)">No works yet</p>';
+                if (worksTrack) worksTrack.innerHTML = '<p style="color:var(--muted)">No works yet</p>';
             }
-        }
-
-        function renderWorks(filter) {
-            let items = works;
-            if (filter !== 'all') {
-                items = works.filter(w => w.type === filter);
-            }
-
-            if (items.length === 0) {
-                worksGrid.innerHTML = '<p style="color:var(--muted);grid-column:1/-1">No works in this category</p>';
-                return;
-            }
-
-            worksGrid.innerHTML = items.map(work => `
-                <div class="work-item">
-                    ${work.type === 'video' 
-                        ? `<video src="${work.url}" muted loop playsinline></video>`
-                        : `<img src="${work.url}" alt="${work.title}" loading="lazy">`
-                    }
-                    <div class="work-overlay">
-                        <div>
-                            <div class="work-title">${work.title}</div>
-                            <div class="work-category">${work.category || ''}</div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            // Video hover play
-            worksGrid.querySelectorAll('.work-item').forEach(item => {
-                const video = item.querySelector('video');
-                if (video) {
-                    item.addEventListener('mouseenter', () => video.play());
-                    item.addEventListener('mouseleave', () => {
-                        video.pause();
-                        video.currentTime = 0;
-                    });
-                }
-                
-                // Cursor hover
-                item.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-                item.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-            });
-
-            // Animate new items
-            gsap.from('.work-item', {
-                y: 60,
-                opacity: 0,
-                duration: 0.8,
-                stagger: 0.1,
-                ease: 'power2.out'
-            });
         }
 
         // Init
