@@ -142,7 +142,8 @@
                     await saveFile(path, base64, `Upload ${filename}`, true);
 
                     resolve({
-                        url: `https://raw.githubusercontent.com/${config.username}/${config.repo}/${DATA_BRANCH}/${path}`,
+                        // Use GitHub Pages URL - more stable than raw.githubusercontent.com
+                        url: `https://${config.username}.github.io/${config.repo}/${path}`,
                         path,
                         filename
                     });
@@ -159,7 +160,8 @@
         try {
             const fileData = await getFile(WORKS_FILE);
             if (!fileData) return [];
-            const content = atob(fileData.content);
+            // Proper UTF-8 decode for Chinese characters
+            const content = decodeURIComponent(escape(atob(fileData.content)));
             return JSON.parse(content).works || [];
         } catch (e) {
             return [];
