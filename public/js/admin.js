@@ -143,7 +143,8 @@
 
                     resolve({
                         // Use jsDelivr CDN - global CDN, fast, no CORS issues
-                        url: `https://cdn.jsdelivr.net/gh/${config.username}/${config.repo}@${DATA_BRANCH}/${path}`,
+                        // Repo name must be lowercase for jsDelivr
+                        url: `https://cdn.jsdelivr.net/gh/${config.username.toLowerCase()}/${config.repo.toLowerCase()}@${DATA_BRANCH}/${path}`,
                         path,
                         filename
                     });
