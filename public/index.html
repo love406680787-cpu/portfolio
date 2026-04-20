@@ -6,49 +6,123 @@
     <title>Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/folder-style.css">
 </head>
 <body>
-    <!-- Cursor follower -->
+
+    <!-- ============ PAGE LOADER ============ -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-inner">
+            <div class="loader-logo">PORTFOLIO</div>
+            <div class="loader-bar-wrap">
+                <div class="loader-bar" id="loaderBar"></div>
+            </div>
+            <div class="loader-count" id="loaderCount">0%</div>
+        </div>
+    </div>
+
+    <!-- ============ SCROLL PROGRESS ============ -->
+    <div class="scroll-progress-bar" id="scrollProgressBar">
+        <div class="scroll-progress-fill" id="scrollProgressFill"></div>
+    </div>
+
+    <!-- ============ NOISE OVERLAY ============ -->
+    <div class="noise-overlay" id="noiseOverlay"></div>
+
+    <!-- ============ CURSOR ============ -->
     <div class="cursor-dot" id="cursorDot"></div>
     <div class="cursor-ring" id="cursorRing"></div>
 
-    <!-- Navigation -->
+    <!-- ============ NAV ============ -->
     <nav class="nav" id="nav">
         <div class="nav-inner">
             <a href="#" class="nav-logo" id="navLogo">
                 <span class="logo-text">PORTFOLIO</span>
             </a>
-            <div class="nav-links">
+            <div class="nav-links" id="navLinks">
                 <a href="#works" class="nav-link">WORKS</a>
                 <a href="#about" class="nav-link">ABOUT</a>
                 <a href="#contact" class="nav-link">CONTACT</a>
+                <a href="admin.html" class="nav-link nav-admin">ADMIN</a>
             </div>
-            <button class="nav-toggle" id="navToggle" aria-label="Menu">
-                <span></span>
-                <span></span>
-            </button>
+            <div class="nav-right">
+                <button class="nav-admin-btn" onclick="location.href='admin.html'">ADMIN</button>
+                <button class="nav-toggle" id="navToggle" aria-label="Menu">
+                    <span class="toggle-line"></span>
+                    <span class="toggle-line"></span>
+                </button>
+            </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- ============ FULL-SCREEN MENU ============ -->
+    <div class="fullscreen-menu" id="fullscreenMenu">
+        <div class="menu-bg-noise"></div>
+        <div class="menu-content">
+            <nav class="menu-nav">
+                <a href="#" class="menu-link" data-menu-link>
+                    <span class="menu-link-num">01</span>
+                    <span class="menu-link-text">Home</span>
+                    <span class="menu-link-arrow">→</span>
+                </a>
+                <a href="#works" class="menu-link" data-menu-link>
+                    <span class="menu-link-num">02</span>
+                    <span class="menu-link-text">Works</span>
+                    <span class="menu-link-arrow">→</span>
+                </a>
+                <a href="#about" class="menu-link" data-menu-link>
+                    <span class="menu-link-num">03</span>
+                    <span class="menu-link-text">About</span>
+                    <span class="menu-link-arrow">→</span>
+                </a>
+                <a href="#contact" class="menu-link" data-menu-link>
+                    <span class="menu-link-num">04</span>
+                    <span class="menu-link-text">Contact</span>
+                    <span class="menu-link-arrow">→</span>
+                </a>
+            </nav>
+            <div class="menu-footer">
+                <div class="menu-footer-links">
+                    <a href="admin.html">Admin Panel</a>
+                    <span>·</span>
+                    <a href="mailto:hello@example.com">hello@example.com</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ HERO ============ -->
     <section class="hero" id="hero">
         <div class="hero-bg">
             <div class="hero-grid"></div>
             <div class="hero-glow hero-glow-1"></div>
             <div class="hero-glow hero-glow-2"></div>
         </div>
+        <div class="hero-noise-layer"></div>
+
         <div class="hero-content">
             <div class="hero-label" data-scroll>
                 <span class="label-line"></span>
                 <span class="label-text">Visual Designer / Creative Developer</span>
             </div>
-            <h1 class="hero-title">
-                <span class="title-line">Port</span>
-                <span class="title-line title-accent">folio</span>
+
+            <!-- Hero Title with Clip-path Reveal -->
+            <h1 class="hero-title" id="heroTitle">
+                <span class="title-line-wrap" id="titleLine1">
+                    <span class="title-line-inner">Port</span>
+                </span>
+                <span class="title-line-wrap title-accent-wrap" id="titleLine2">
+                    <span class="title-line-inner">folio</span>
+                </span>
             </h1>
+
+            <!-- Featured Words Cycling -->
+            <div class="hero-featured" id="heroFeatured">
+                <span class="featured-word" id="featuredWord">AGENCY</span>
+            </div>
+
             <p class="hero-desc" data-scroll>
                 Crafting unique digital experiences through visual design and creative code
             </p>
@@ -60,6 +134,7 @@
                 <a href="#contact" class="btn btn-ghost">Get in Touch</a>
             </div>
         </div>
+
         <div class="hero-scroll" data-scroll>
             <div class="scroll-indicator">
                 <div class="scroll-line"></div>
@@ -76,22 +151,14 @@
     <section class="marquee-section">
         <div class="marquee">
             <div class="marquee-track">
-                <span>VISUAL DESIGN</span>
-                <span class="dot">●</span>
-                <span>INTERACTIVE</span>
-                <span class="dot">●</span>
-                <span>MOTION</span>
-                <span class="dot">●</span>
-                <span>CREATIVE CODE</span>
-                <span class="dot">●</span>
-                <span>VISUAL DESIGN</span>
-                <span class="dot">●</span>
-                <span>INTERACTIVE</span>
-                <span class="dot">●</span>
-                <span>MOTION</span>
-                <span class="dot">●</span>
-                <span>CREATIVE CODE</span>
-                <span class="dot">●</span>
+                <span>VISUAL DESIGN</span><span class="dot">●</span>
+                <span>INTERACTIVE</span><span class="dot">●</span>
+                <span>MOTION</span><span class="dot">●</span>
+                <span>CREATIVE CODE</span><span class="dot">●</span>
+                <span>VISUAL DESIGN</span><span class="dot">●</span>
+                <span>INTERACTIVE</span><span class="dot">●</span>
+                <span>MOTION</span><span class="dot">●</span>
+                <span>CREATIVE CODE</span><span class="dot">●</span>
             </div>
         </div>
     </section>
@@ -111,8 +178,7 @@
             <button class="filter-btn" data-filter="image">Image</button>
             <button class="filter-btn" data-filter="video">Video</button>
         </div>
-        <div class="folder-grid" id="folderGrid">
-        </div>
+        <div class="folder-grid" id="folderGrid"></div>
         <div class="works-empty" id="worksEmpty" style="display:none;">
             <div class="empty-icon">📂</div>
             <p>No works yet</p>
@@ -199,18 +265,10 @@
                     <p class="footer-tagline">Crafting Digital Experiences</p>
                 </div>
                 <div class="footer-social">
-                    <a href="#" class="social-item">
-                        <span>GH</span>
-                    </a>
-                    <a href="#" class="social-item">
-                        <span>TW</span>
-                    </a>
-                    <a href="#" class="social-item">
-                        <span>IG</span>
-                    </a>
-                    <a href="#" class="social-item">
-                        <span>BE</span>
-                    </a>
+                    <a href="#" class="social-item"><span>GH</span></a>
+                    <a href="#" class="social-item"><span>TW</span></a>
+                    <a href="#" class="social-item"><span>IG</span></a>
+                    <a href="#" class="social-item"><span>BE</span></a>
                 </div>
             </div>
             <div class="footer-bottom">
