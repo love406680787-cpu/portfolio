@@ -142,8 +142,9 @@
                     await saveFile(path, base64, `Upload ${filename}`, true);
 
                     resolve({
-                        // Use GitHub Pages URL - more stable than raw.githubusercontent.com
-                        url: `https://${config.username}.github.io/${config.repo}/${path}`,
+                        // Use jsDelivr CDN - global CDN, fast, no CORS issues
+                        // Repo name must be lowercase for jsDelivr
+                        url: `https://cdn.jsdelivr.net/gh/${config.username.toLowerCase()}/${config.repo.toLowerCase()}@${DATA_BRANCH}/${path}`,
                         path,
                         filename
                     });

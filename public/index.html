@@ -1,191 +1,1091 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio</title>
+    
+    <!-- Fonts: Clash Display + Satoshi -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/folder-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --fg: #ffffff;
+            --muted: #888888;
+            --accent: #00ff88;
+            --card: #111111;
+            --border: #1a1a1a;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--fg);
+            font-size: 16px;
+            line-height: 1.5;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--fg);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease;
+        }
+
+        .cursor.hover {
+            width: 60px;
+            height: 60px;
+        }
+
+        .cursor-dot {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--fg);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        }
+
+        /* Noise Overlay */
+        .noise {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* Page Loader */
+        .loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-text {
+            font-size: 14px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .loader-text span {
+            display: inline-block;
+        }
+
+        .loader-progress {
+            width: 200px;
+            height: 1px;
+            background: var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--fg);
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 24px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            mix-blend-mode: difference;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+            color: var(--fg);
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--fg);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 12px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-btn span {
+            display: block;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .menu-btn span:last-child {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            transform: translateY(100%);
+        }
+
+        .menu-btn:hover span:first-child {
+            transform: translateY(-100%);
+        }
+
+        .menu-btn:hover span:last-child {
+            transform: translateY(0);
+        }
+
+        /* Fullscreen Menu */
+        .menu {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .menu.active {
+            pointer-events: all;
+            opacity: 1;
+        }
+
+        .menu-inner {
+            text-align: center;
+        }
+
+        .menu-item {
+            display: block;
+            font-size: clamp(32px, 6vw, 72px);
+            font-weight: 700;
+            color: var(--fg);
+            text-decoration: none;
+            line-height: 1.3;
+            letter-spacing: -0.02em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-item span {
+            display: inline-block;
+            transform: translateY(100%);
+        }
+
+        .menu.active .menu-item span {
+            transform: translateY(0);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .menu.active .menu-item:nth-child(1) span { transition-delay: 0.1s; }
+        .menu.active .menu-item:nth-child(2) span { transition-delay: 0.15s; }
+        .menu.active .menu-item:nth-child(3) span { transition-delay: 0.2s; }
+        .menu.active .menu-item:nth-child(4) span { transition-delay: 0.25s; }
+        .menu.active .menu-item:nth-child(5) span { transition-delay: 0.3s; }
+
+        .menu-item:hover {
+            color: var(--accent);
+        }
+
+        /* Sections */
+        section {
+            padding: 0 48px;
+            position: relative;
+        }
+
+        .section-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 120px 0;
+        }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .section-num {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            max-width: 900px;
+        }
+
+        .hero-title {
+            font-size: clamp(48px, 10vw, 120px);
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -0.03em;
+            margin-bottom: 32px;
+        }
+
+        .hero-title .line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .hero-title .line span {
+            display: inline-block;
+            transform: translateY(100%);
+        }
+
+        .hero-title em {
+            font-style: normal;
+            color: var(--accent);
+        }
+
+        .hero-desc {
+            font-size: 18px;
+            color: var(--muted);
+            max-width: 500px;
+            line-height: 1.7;
+            opacity: 0;
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 48px;
+            left: 48px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            opacity: 0;
+        }
+
+        .scroll-line {
+            width: 60px;
+            height: 1px;
+            background: var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 30%;
+            background: var(--fg);
+            animation: scrollLine 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollLine {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(300%); }
+        }
+
+        /* Services */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 48px;
+            border-top: 1px solid var(--border);
+            padding-top: 48px;
+        }
+
+        @media (max-width: 900px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .service-item {
+            padding-top: 24px;
+        }
+
+        .service-num {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 16px;
+        }
+
+        .service-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -0.01em;
+        }
+
+        .service-list {
+            list-style: none;
+        }
+
+        .service-list li {
+            font-size: 15px;
+            color: var(--muted);
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .service-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* ==============================
+           WORKS Header + Filter
+           ============================== */
+        .works-header {
+            padding: 80px 48px 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .works-filter {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-body);
+            border-radius: 100px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: rgba(255,255,255,0.1);
+            color: var(--fg);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        /* ==============================
+           LIQUID GLASS CARD (iOS style)
+           ============================== */
+        .glass-card {
+            /* iOS liquid glass */
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            /* Refraction shine top edge */
+            box-shadow:
+                0 0 0 0.5px rgba(255, 255, 255, 0.15) inset,
+                0 1px 0 0 rgba(255, 255, 255, 0.25) inset,
+                0 -1px 0 0 rgba(255, 255, 255, 0.05) inset,
+                0 20px 60px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(255, 255, 255, 0.03);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.4) 30%,
+                rgba(255, 255, 255, 0.4) 70%,
+                transparent 100%);
+        }
+
+        .glass-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%,
+                rgba(255, 255, 255, 0.06) 0%,
+                transparent 60%);
+            pointer-events: none;
+        }
+
+        /* ==============================
+           WORKS — Arc Card Carousel (Pinterest style)
+           ============================== */
+        .works-container {
+            position: relative;
+            height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        .arc-carousel {
+            position: relative;
+            width: 100%;
+            max-width: 1100px;
+            height: 500px;
+            perspective: 1200px;
+            margin: 0 auto;
+        }
+
+        .arc-card {
+            position: absolute;
+            width: 280px;
+            height: 380px;
+            left: 50%;
+            top: 50%;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(30px) saturate(160%);
+            -webkit-backdrop-filter: blur(30px) saturate(160%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow:
+                0 8px 40px rgba(0, 0, 0, 0.35),
+                0 0 0 0.5px rgba(255, 255, 255, 0.12) inset,
+                0 1px 0 0 rgba(255, 255, 255, 0.22) inset;
+        }
+
+        .arc-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
+        }
+
+        .arc-card-img {
+            width: 100%;
+            height: 82%;
+            overflow: hidden;
+            border-radius: 18px 18px 0 0;
+            background: #111;
+        }
+
+        .arc-card-img img,
+        .arc-card-img video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .arc-card.active .arc-card-img img,
+        .arc-card.active .arc-card-img video {
+            transform: scale(1.04);
+        }
+
+        .arc-card-info {
+            padding: 14px 18px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .arc-card-title {
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .arc-card-cat {
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: 0.05em;
+        }
+
+        /* Active card (center) - biggest */
+        .arc-card.active {
+            width: 320px;
+            height: 420px;
+            z-index: 10 !important;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.45),
+                0 0 0 1px var(--accent),
+                0 0 80px rgba(0, 255, 136, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Hint */
+        .arc-hint {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            opacity: 0.4;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .works-container:hover .arc-hint { opacity: 0; }
+
+        .cards-hint-text {
+            font-size: 11px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        /* ==============================
+           CARD DETAIL MODAL
+           ============================== */
+        .card-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .card-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .card-modal-inner {
+            max-width: 900px;
+            width: 90%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.9) translateY(40px);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card-modal.active .card-modal-inner {
+            transform: scale(1) translateY(0);
+        }
+
+        .card-modal-media {
+            flex: 1;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #111;
+            min-height: 300px;
+        }
+
+        .card-modal-media img,
+        .card-modal-media video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            max-height: 60vh;
+        }
+
+        .card-modal-info {
+            padding: 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .card-modal-cat {
+            font-size: 12px;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+        }
+
+        .card-modal-close {
+            width: 48px;
+            height: 48px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            color: var(--fg);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .card-modal-close:hover {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+
+        /* Trust / Marquee */
+        .trust {
+            overflow: hidden;
+            padding: 80px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .marquee {
+            display: flex;
+            gap: 64px;
+            width: max-content;
+            animation: marquee 40s linear infinite;
+        }
+
+        .marquee-item {
+            font-size: 24px;
+            font-weight: 600;
+            white-space: nowrap;
+            color: var(--muted);
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .marquee-item:hover {
+            opacity: 1;
+        }
+
+        .marquee-dot {
+            color: var(--accent);
+            font-size: 8px;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Contact */
+        .contact {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .contact-title {
+            font-size: clamp(36px, 7vw, 80px);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 48px;
+        }
+
+        .contact-title em {
+            font-style: normal;
+            color: var(--accent);
+        }
+
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 40px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--fg);
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--fg);
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .contact-btn:hover::before {
+            transform: translateY(0);
+        }
+
+        .contact-btn span,
+        .contact-btn svg {
+            position: relative;
+            z-index: 1;
+            transition: color 0.4s ease;
+        }
+
+        .contact-btn:hover span,
+        .contact-btn:hover svg {
+            color: var(--bg);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 32px 48px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-copy {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .footer-links a {
+            font-size: 13px;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--fg);
+        }
+
+        /* Scroll Progress */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: var(--accent);
+            z-index: 9999;
+            transform-origin: left;
+            transform: scaleX(0);
+        }
+
+        /* Reveal Animation */
+        .reveal {
+            overflow: hidden;
+        }
+
+        .reveal span {
+            display: inline-block;
+            transform: translateY(100%);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 24px;
+            }
+            section {
+                padding: 0 24px;
+            }
+            .section-inner {
+                padding: 80px 0;
+            }
+            .hero-scroll {
+                left: 24px;
+                bottom: 24px;
+            }
+            .footer {
+                padding: 24px;
+            }
+            .footer-inner {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Cursor follower -->
-    <div class="cursor-dot" id="cursorDot"></div>
-    <div class="cursor-ring" id="cursorRing"></div>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-dot"></div>
 
-    <!-- Navigation -->
-    <nav class="nav" id="nav">
-        <div class="nav-inner">
-            <a href="#" class="nav-logo" id="navLogo">
-                <span class="logo-text">PORTFOLIO</span>
-            </a>
-            <div class="nav-links">
-                <a href="#works" class="nav-link">WORKS</a>
-                <a href="#about" class="nav-link">ABOUT</a>
-                <a href="#contact" class="nav-link">CONTACT</a>
-            </div>
-            <button class="nav-toggle" id="navToggle" aria-label="Menu">
-                <span></span>
-                <span></span>
-            </button>
+    <!-- Noise Overlay -->
+    <div class="noise"></div>
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress"></div>
+
+    <!-- Page Loader -->
+    <div class="loader">
+        <div class="loader-text">
+            <span>L</span><span>O</span><span>A</span><span>D</span><span>I</span><span>N</span><span>G</span>
+        </div>
+        <div class="loader-progress">
+            <div class="loader-bar"></div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="#" class="logo">Portfolio</a>
+        <button class="menu-btn">
+            <span>Menu</span>
+            <span>Close</span>
+        </button>
+    </header>
+
+    <!-- Fullscreen Menu -->
+    <nav class="menu">
+        <div class="menu-inner">
+            <a href="#about" class="menu-item"><span>About</span></a>
+            <a href="#services" class="menu-item"><span>Services</span></a>
+            <a href="#works" class="menu-item"><span>Works</span></a>
+            <a href="#trust" class="menu-item"><span>Clients</span></a>
+            <a href="#contact" class="menu-item"><span>Contact</span></a>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero" id="hero">
-        <div class="hero-bg">
-            <div class="hero-grid"></div>
-            <div class="hero-glow hero-glow-1"></div>
-            <div class="hero-glow hero-glow-2"></div>
-        </div>
-        <div class="hero-content">
-            <div class="hero-label" data-scroll>
-                <span class="label-line"></span>
-                <span class="label-text">Visual Designer / Creative Developer</span>
+    <!-- Hero -->
+    <section class="hero" id="about">
+        <div class="section-inner">
+            <div class="section-label">
+                <span class="section-num">1</span>
+                <span class="section-title">About</span>
             </div>
-            <h1 class="hero-title">
-                <span class="title-line">Port</span>
-                <span class="title-line title-accent">folio</span>
-            </h1>
-            <p class="hero-desc" data-scroll>
-                Crafting unique digital experiences through visual design and creative code
-            </p>
-            <div class="hero-actions" data-scroll>
-                <a href="#works" class="btn btn-primary">
-                    <span>View Works</span>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </a>
-                <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <div class="line"><span>We craft work that</span></div>
+                    <div class="line"><span>defines the <em>now</em></span></div>
+                    <div class="line"><span>and shapes what's next.</span></div>
+                </h1>
+                <p class="hero-desc">
+                    Driven by curiosity, not formula. We explore where creativity and technology collide — across brand, film, immersive spaces, and whatever medium the work demands next.
+                </p>
             </div>
-        </div>
-        <div class="hero-scroll" data-scroll>
-            <div class="scroll-indicator">
+            <div class="hero-scroll">
                 <div class="scroll-line"></div>
-            </div>
-            <span class="scroll-text">SCROLL</span>
-        </div>
-        <div class="hero-counter" data-scroll>
-            <span class="counter-num" id="workCount">0</span>
-            <span class="counter-label">WORKS</span>
-        </div>
-    </section>
-
-    <!-- Marquee -->
-    <section class="marquee-section">
-        <div class="marquee">
-            <div class="marquee-track">
-                <span>VISUAL DESIGN</span>
-                <span class="dot">●</span>
-                <span>INTERACTIVE</span>
-                <span class="dot">●</span>
-                <span>MOTION</span>
-                <span class="dot">●</span>
-                <span>CREATIVE CODE</span>
-                <span class="dot">●</span>
-                <span>VISUAL DESIGN</span>
-                <span class="dot">●</span>
-                <span>INTERACTIVE</span>
-                <span class="dot">●</span>
-                <span>MOTION</span>
-                <span class="dot">●</span>
-                <span>CREATIVE CODE</span>
-                <span class="dot">●</span>
+                <span>Scroll to explore</span>
             </div>
         </div>
     </section>
 
-    <!-- Works Section -->
-    <section class="works-section" id="works">
-        <div class="section-header">
-            <div class="section-tag" data-scroll>
-                <span class="tag-num">02</span>
-                <span class="tag-text">SELECTED WORKS</span>
+    <!-- Services -->
+    <section id="services">
+        <div class="section-inner">
+            <div class="section-label">
+                <span class="section-num">2</span>
+                <span class="section-title">What We Do</span>
             </div>
-            <h2 class="section-title" data-scroll>Selected Works</h2>
-            <p class="section-desc" data-scroll>Each project is a carefully crafted creation, from concept to completion</p>
-        </div>
-        <div class="works-filter" data-scroll>
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="image">Image</button>
-            <button class="filter-btn" data-filter="video">Video</button>
-        </div>
-        <div class="folder-grid" id="folderGrid">
-        </div>
-        <div class="works-empty" id="worksEmpty" style="display:none;">
-            <div class="empty-icon">📂</div>
-            <p>No works yet</p>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="about-section" id="about">
-        <div class="about-inner">
-            <div class="about-left">
-                <div class="section-tag" data-scroll>
-                    <span class="tag-num">03</span>
-                    <span class="tag-text">ABOUT ME</span>
+            <div class="services-grid">
+                <div class="service-item">
+                    <div class="service-num">01</div>
+                    <h3 class="service-title">Direction</h3>
+                    <ul class="service-list">
+                        <li>Art Direction</li>
+                        <li>Design Concept</li>
+                        <li>Commercials & CGI</li>
+                        <li>Brand Identity</li>
+                    </ul>
                 </div>
-                <h2 class="section-title" data-scroll>About Me</h2>
-                <div class="about-text" data-scroll>
-                    <p>Passionate about visual design and creative coding, focused on crafting unique digital experiences. Years of design experience spanning from concept to final delivery.</p>
-                    <p>I believe great design is the perfect balance of form and function — every pixel and animation serves the user experience.</p>
+                <div class="service-item">
+                    <div class="service-num">02</div>
+                    <h3 class="service-title">Digital</h3>
+                    <ul class="service-list">
+                        <li>Web Experience</li>
+                        <li>Social Media</li>
+                        <li>Asset Production</li>
+                        <li>Motion Design</li>
+                    </ul>
                 </div>
-                <div class="about-stats" data-scroll>
-                    <div class="stat-item">
-                        <span class="stat-num">5+</span>
-                        <span class="stat-label">Years Experience</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-num">50+</span>
-                        <span class="stat-label">Projects</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-num">20+</span>
-                        <span class="stat-label">Clients</span>
-                    </div>
-                </div>
-                <div class="about-skills" data-scroll>
-                    <span class="skill-pill">UI Design</span>
-                    <span class="skill-pill">Motion Design</span>
-                    <span class="skill-pill">Creative Coding</span>
-                    <span class="skill-pill">WebGL</span>
-                    <span class="skill-pill">Three.js</span>
-                    <span class="skill-pill">Figma</span>
-                </div>
-            </div>
-            <div class="about-right" data-scroll>
-                <div class="about-visual">
-                    <div class="visual-circle"></div>
-                    <div class="visual-lines">
-                        <div class="vline"></div>
-                        <div class="vline"></div>
-                        <div class="vline"></div>
-                    </div>
-                    <div class="visual-emoji">👨‍🎨</div>
+                <div class="service-item">
+                    <div class="service-num">03</div>
+                    <h3 class="service-title">Offline</h3>
+                    <ul class="service-list">
+                        <li>Immersive Event</li>
+                        <li>Interactive Art</li>
+                        <li>OOH/Billboard</li>
+                        <li>Print & Editorial</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section class="contact-section" id="contact">
-        <div class="contact-inner">
-            <div class="section-tag" data-scroll>
-                <span class="tag-num">04</span>
-                <span class="tag-text">GET IN TOUCH</span>
+    <!-- Works -->
+    <section id="works">
+        <div class="works-header">
+            <div class="section-label">
+                <span class="section-num">3</span>
+                <span class="section-title">Featured Work</span>
             </div>
-            <h2 class="contact-title" data-scroll>
-                Let's Create<br>Something <span class="title-accent">Amazing</span>
+            <div class="works-filter">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="image">Images</button>
+                <button class="filter-btn" data-filter="video">Videos</button>
+            </div>
+        </div>
+        <div class="works-container" id="worksContainer">
+            <div class="arc-carousel" id="arcCarousel"></div>
+            <div class="arc-hint">
+                <span>Scroll to navigate · Click to view</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Card Detail Modal -->
+    <div class="card-modal" id="cardModal">
+        <div class="card-modal-inner">
+            <div class="card-modal-media" id="modalMedia"></div>
+            <div class="card-modal-info">
+                <div>
+                    <div class="card-modal-title" id="modalTitle"></div>
+                    <div class="card-modal-cat" id="modalCat"></div>
+                </div>
+                <button class="card-modal-close" id="modalClose">×</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trust -->
+    <section id="trust">
+        <div class="section-inner">
+            <div class="section-label">
+                <span class="section-num">4</span>
+                <span class="section-title">They Trust Us</span>
+            </div>
+        </div>
+        <div class="trust">
+            <div class="marquee">
+                <span class="marquee-item">Louis Vuitton</span>
+                <span class="marquee-dot">●</span>
+                <span class="marquee-item">Chanel</span>
+                <span class="marquee-dot">●</span>
+                <span class="marquee-item">Dior</span>
+                <span class="marquee-dot">●</span>
+                <span class="marquee-item">OnePlus</span>
+                <span class="marquee-dot">●</span>
+                <span class="marquee-item">L'Oreal</span>
+                <span class="marquee-dot">●</span>
+                <span class="marquee-item">The North Face</span>
+                <span class="marquee-dot">●</span>
+                <span class="marquee-item">Oppo</span>
+                <span class="marquee-dot">●</span>
+                <span class="marquee-item">Glossier</span>
+                <span class="marquee-dot">●</span>
+                <!-- Duplicate for seamless loop -->
+                <span class="marquee-item">Louis Vuitton</span>
+                <span class="marquee-dot">●</span>
+                <span class="marquee-item">Chanel</span>
+                <span class="marquee-dot">●</span>
+                <span class="marquee-item">Dior</span>
+                <span class="marquee-dot">●</span>
+                <span class="marquee-item">OnePlus</span>
+                <span class="marquee-dot">●</span>
+                <span class="marquee-item">L'Oreal</span>
+                <span class="marquee-dot">●</span>
+                <span class="marquee-item">The North Face</span>
+                <span class="marquee-dot">●</span>
+                <span class="marquee-item">Oppo</span>
+                <span class="marquee-dot">●</span>
+                <span class="marquee-item">Glossier</span>
+                <span class="marquee-dot">●</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="contact" id="contact">
+        <div class="section-inner">
+            <div class="section-label">
+                <span class="section-num">5</span>
+                <span class="section-title">Get in Touch</span>
+            </div>
+            <h2 class="contact-title">
+                Let's create<br>
+                something <em>extraordinary</em>
             </h2>
-            <p class="contact-desc" data-scroll>
-                Have an idea or project in mind?<br>Let's connect and build something great
-            </p>
-            <a href="mailto:hello@example.com" class="contact-email" data-scroll>
-                <span class="email-icon">✉</span>
-                <span class="email-text">hello@example.com</span>
-                <span class="email-arrow">→</span>
+            <a href="mailto:hello@portfolio.com" class="contact-btn">
+                <span>hello@portfolio.com</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M7 17L17 7M17 7H7M17 7V17"/>
+                </svg>
             </a>
         </div>
     </section>
@@ -193,42 +1093,332 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-inner">
-            <div class="footer-top">
-                <div class="footer-brand">
-                    <span class="footer-logo">PORTFOLIO</span>
-                    <p class="footer-tagline">Crafting Digital Experiences</p>
-                </div>
-                <div class="footer-social">
-                    <a href="#" class="social-item">
-                        <span>GH</span>
-                    </a>
-                    <a href="#" class="social-item">
-                        <span>TW</span>
-                    </a>
-                    <a href="#" class="social-item">
-                        <span>IG</span>
-                    </a>
-                    <a href="#" class="social-item">
-                        <span>BE</span>
-                    </a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>© 2026 Portfolio. All rights reserved.</p>
+            <div class="footer-copy">© 2026 Portfolio. All rights reserved.</div>
+            <div class="footer-links">
+                <a href="#">Instagram</a>
+                <a href="#">Behance</a>
+                <a href="#">LinkedIn</a>
             </div>
         </div>
     </footer>
 
-    <!-- Lightbox -->
-    <div class="lightbox" id="lightbox">
-        <button class="lightbox-close" id="lightboxClose">×</button>
-        <button class="lightbox-nav lightbox-prev" id="lightboxPrev">←</button>
-        <button class="lightbox-nav lightbox-next" id="lightboxNext">→</button>
-        <div class="lightbox-content" id="lightboxContent"></div>
-    </div>
+    <script>
+        // Register GSAP plugins
+        gsap.registerPlugin(ScrollTrigger);
 
-    <script src="js/particles.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/folder-gallery.js"></script>
+        // State
+        let works = [];
+        const worksGrid = document.getElementById('worksGrid');
+        const loader = document.querySelector('.loader');
+        const loaderBar = document.querySelector('.loader-bar');
+        const menu = document.querySelector('.menu');
+        const menuBtn = document.querySelector('.menu-btn');
+        const cursor = document.querySelector('.cursor');
+        const cursorDot = document.querySelector('.cursor-dot');
+        const scrollProgress = document.querySelector('.scroll-progress');
+
+        // Custom Cursor
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+            
+            cursor.style.left = cursorX - 10 + 'px';
+            cursor.style.top = cursorY - 10 + 'px';
+            cursorDot.style.left = mouseX - 2 + 'px';
+            cursorDot.style.top = mouseY - 2 + 'px';
+            
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Cursor hover states
+        document.querySelectorAll('a, button, .work-item').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // Loader
+        function initLoader() {
+            const tl = gsap.timeline();
+            
+            // Animate loader text
+            tl.to('.loader-text span', {
+                y: 0,
+                opacity: 1,
+                duration: 0.5,
+                stagger: 0.05,
+                ease: 'power2.out'
+            });
+
+            // Fake progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 20 + 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    // Hide loader
+                    gsap.to(loader, {
+                        opacity: 0,
+                        duration: 0.6,
+                        delay: 0.3,
+                        onComplete: () => {
+                            loader.style.display = 'none';
+                            initAnimations();
+                        }
+                    });
+                }
+                loaderBar.style.width = progress + '%';
+            }, 100);
+        }
+
+        // Main Animations
+        function initAnimations() {
+            // Hero title reveal
+            gsap.to('.hero-title .line span', {
+                y: 0,
+                duration: 1.2,
+                stagger: 0.1,
+                ease: 'power3.out',
+                delay: 0.2
+            });
+
+            // Hero desc fade in
+            gsap.to('.hero-desc', {
+                opacity: 1,
+                duration: 1,
+                delay: 0.8
+            });
+
+            // Hero scroll indicator
+            gsap.to('.hero-scroll', {
+                opacity: 1,
+                duration: 1,
+                delay: 1.2
+            });
+
+            // Scroll Progress
+            gsap.to(scrollProgress, {
+                scaleX: 1,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: document.body,
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: true
+                }
+            });
+
+            // Section reveals
+            gsap.utils.toArray('section:not(.hero)').forEach(section => {
+                const label = section.querySelector('.section-label');
+                if (label) {
+                    gsap.from(label, {
+                        y: 40,
+                        opacity: 0,
+                        duration: 1,
+                        ease: 'power2.out',
+                        scrollTrigger: {
+                            trigger: section,
+                            start: 'top 80%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    });
+                }
+            });
+
+            // Services items
+            gsap.utils.toArray('.service-item').forEach((item, i) => {
+                gsap.from(item, {
+                    y: 60,
+                    opacity: 0,
+                    duration: 1,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: item,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+            });
+
+            // Contact title
+            gsap.from('.contact-title', {
+                y: 80,
+                opacity: 0,
+                duration: 1.2,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: '.contact',
+                    start: 'top 70%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        }
+
+        // Menu Toggle
+        menuBtn.addEventListener('click', () => {
+            menu.classList.toggle('active');
+        });
+
+        // Close menu on link click
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                menu.classList.remove('active');
+            });
+        });
+
+        // ==============================
+        // WORKS — 3D Stacked Cards
+        // ==============================
+        const cardsStack = document.getElementById('cardsStack');
+        const cardModal = document.getElementById('cardModal');
+        const modalMedia = document.getElementById('modalMedia');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalCat = document.getElementById('modalCat');
+        const modalClose = document.getElementById('modalClose');
+
+        function renderStackCards(items) {
+            if (!cardsStack) return;
+
+            if (items.length === 0) {
+                cardsStack.innerHTML = '<p style="color:var(--muted);padding:40px;text-align:center;">No works yet</p>';
+                return;
+            }
+
+            // 最多显示5张卡片
+            const showCards = items.slice(0, 5);
+
+            cardsStack.innerHTML = showCards.map((work, i) => `
+                <div class="stack-card glass-card" data-index="${i}">
+                    <div class="stack-card-img">
+                        ${work.type === 'video'
+                            ? `<video src="${work.url}" muted loop playsinline></video>`
+                            : `<img src="${work.url}" alt="${work.title}" loading="lazy">`
+                        }
+                    </div>
+                    <div class="stack-card-info">
+                        <div class="stack-card-title">${work.title}</div>
+                        <div class="stack-card-cat">${work.category || ''}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // 事件绑定
+            cardsStack.querySelectorAll('.stack-card').forEach((card, i) => {
+                const video = card.querySelector('video');
+                if (video) {
+                    card.addEventListener('mouseenter', () => video.play());
+                    card.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+                }
+                card.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+                card.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+                
+                // 点击打开详情
+                card.addEventListener('click', () => openModal(items[i]));
+            });
+
+            // 动画入场
+            gsap.from('.stack-card', {
+                opacity: 0,
+                y: 60,
+                rotateX: -20,
+                duration: 0.8,
+                stagger: 0.1,
+                ease: 'power2.out'
+            });
+        }
+
+        function openModal(work) {
+            if (!work || !cardModal) return;
+            
+            modalTitle.textContent = work.title;
+            modalCat.textContent = work.category || '';
+            
+            if (work.type === 'video') {
+                modalMedia.innerHTML = `<video src="${work.url}" controls autoplay></video>`;
+            } else {
+                modalMedia.innerHTML = `<img src="${work.url}" alt="${work.title}">`;
+            }
+            
+            cardModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            if (!cardModal) return;
+            cardModal.classList.remove('active');
+            document.body.style.overflow = '';
+            
+            // 停止视频
+            const video = modalMedia?.querySelector('video');
+            if (video) { video.pause(); video.remove(); }
+        }
+
+        if (modalClose) modalClose.addEventListener('click', closeModal);
+        if (cardModal) {
+            cardModal.addEventListener('click', (e) => {
+                if (e.target === cardModal) closeModal();
+            });
+        }
+
+        // ESC 关闭
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && cardModal?.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        function renderWorks(filter) {
+            let items = works;
+            if (filter !== 'all') items = works.filter(w => w.type === filter);
+            renderStackCards(items);
+        }
+
+        // Filter Buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderWorks(btn.dataset.filter);
+            });
+        });
+
+        // Load Works
+        async function loadWorks() {
+            try {
+                const local = localStorage.getItem('portfolioWorks');
+                if (local) {
+                    const data = JSON.parse(local);
+                    if (data?.works?.length > 0) {
+                        works = data.works;
+                        renderStackCards(works);
+                        return;
+                    }
+                }
+                // 从 jsDelivr CDN 加载 GitHub 上的作品数据
+                const cdnUrl = 'https://cdn.jsdelivr.net/gh/love406680787-cpu/portfolio@main/data/works.json';
+                const res = await fetch(cdnUrl + '?t=' + Date.now());
+                const data = await res.json();
+                works = data.works || [];
+                renderStackCards(works);
+            } catch (e) {
+                if (cardsStack) cardsStack.innerHTML = '<p style="color:var(--muted);padding:40px;text-align:center;">No works yet</p>';
+            }
+        }
+
+        // Init
+        loadWorks();
+        initLoader();
+    </script>
 </body>
 </html>

@@ -1,245 +1,387 @@
-
 /**
- * Portfolio Main JS - Enhanced
- * - Custom cursor
- * - Canvas particle background
- * - Hero text character reveal
- * - Magnetic hover effect
- * - Parallax scroll
- * - Scroll progress bar
+ * Portfolio - fromanother.love inspired interactions
  */
+
 (function() {
     'use strict';
 
     // =========================================
-    // Custom Cursor
+    // DOM Elements
     // =========================================
-    const cursorDot = document.getElementById('cursorDot');
-    const cursorRing = document.getElementById('cursorRing');
-    let mouseX = 0, mouseY = 0;
-    let ringX = 0, ringY = 0;
+    const pageLoader = document.getElementById('pageLoader');
+    const loaderBar = document.getElementById('loaderBar');
+    const loaderCount = document.getElementById('loaderCount');
+    const scrollProgress = document.getElementById('scrollProgress');
+    const header = document.getElementById('header');
+    const menuToggle = document.getElementById('menuToggle');
+    const fullscreenMenu = document.getElementById('fullscreenMenu');
+    const worksGrid = document.getElementById('worksGrid');
+    const worksEmpty = document.getElementById('worksEmpty');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxContent = document.getElementById('lightboxContent');
+    const lightboxInfo = document.getElementById('lightboxInfo');
+    const lightboxClose = document.getElementById('lightboxClose');
+    const lightboxPrev = document.getElementById('lightboxPrev');
+    const lightboxNext = document.getElementById('lightboxNext');
 
-    // Initialize cursor position off-screen
-    cursorDot.style.left = '-100px';
-    cursorDot.style.top = '-100px';
-    cursorRing.style.left = '-100px';
-    cursorRing.style.top = '-100px';
+    // State
+    let works = [];
+    let currentWorkIndex = 0;
+    let isLoaderDone = false;
 
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        cursorDot.style.left = mouseX + 'px';
-        cursorDot.style.top = mouseY + 'px';
-        cursorDot.classList.add('visible');
-        cursorRing.classList.add('visible');
-    });
-
-    // Smooth ring follow
-    function animateRing() {
-        ringX += (mouseX - ringX) * 0.15;
-        ringY += (mouseY - ringY) * 0.15;
-        cursorRing.style.left = ringX + 'px';
-        cursorRing.style.top = ringY + 'px';
-        requestAnimationFrame(animateRing);
+    // =========================================
+    // PAGE LOADER
+    // =========================================
+    function initLoader() {
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 15 + 5;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+                setTimeout(() => {
+                    pageLoader.classList.add('hidden');
+                    document.body.style.overflow = '';
+                    isLoaderDone = true;
+                    initScrollReveal();
+                }, 300);
+            }
+            updateLoader(progress);
+        }, 100);
     }
-    animateRing();
 
-    // Hover effect on interactive elements
-    const hoverTargets = document.querySelectorAll('a, button, .folder, .folder-item, .btn');
-    hoverTargets.forEach(el => {
-        el.addEventListener('mouseenter', () => cursorRing.classList.add('hover'));
-        el.addEventListener('mouseleave', () => cursorRing.classList.remove('hover'));
-    });
-
-    // Hide cursor when leaving window
-    document.addEventListener('mouseleave', () => {
-        cursorDot.classList.remove('visible');
-        cursorRing.classList.remove('visible');
-    });
+    function updateLoader(val) {
+        const p = Math.min(100, Math.floor(val));
+        if (loaderBar) loaderBar.style.width = p + '%';
+        if (loaderCount) loaderCount.textContent = p;
+    }
 
     // =========================================
-    // Scroll Progress Bar
+    // SCROLL PROGRESS
     // =========================================
-    const progressBar = document.createElement('div');
-    progressBar.id = 'scrollProgress';
-    progressBar.style.cssText = `
-        position:fixed;top:0;left:0;height:2px;background:linear-gradient(to right, #00d4ff, #c8ff00);
-        z-index:10001;width:0%;transition:width 0.1s linear;pointer-events:none;
-    `;
-    document.body.appendChild(progressBar);
-
-    window.addEventListener('scroll', () => {
+    function updateScrollProgress() {
         const scrollTop = window.scrollY;
         const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-        progressBar.style.width = pct + '%';
-    });
-
-    // =========================================
-    // Navigation Scroll Effect
-    // =========================================
-    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            nav.classList.add('scrolled');
-        } else {
-            nav.classList.remove('scrolled');
+        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        if (scrollProgress) {
+            scrollProgress.style.width = progress + '%';
         }
-    });
-
-    // Mobile menu toggle
-    const navToggle = document.getElementById('navToggle');
-    const navLinks = document.querySelector('.nav-links');
-    if (navToggle && navLinks) {
-        navToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('open');
-        });
     }
 
     // =========================================
-    // Hero Text Character Reveal
+    // FULLSCREEN MENU
     // =========================================
-    function splitTextReveal(selector) {
-        const el = document.querySelector(selector);
-        if (!el) return;
-        const text = el.textContent;
-        el.innerHTML = '';
-        [...text].forEach((char, i) => {
-            const span = document.createElement('span');
-            span.className = 'char';
-            span.textContent = char === ' ' ? '\u00A0' : char;
-            span.style.display = 'inline-block';
-            span.style.opacity = '0';
-            span.style.transform = 'translateY(60px) rotateX(-40deg)';
-            span.style.transition = `all 0.7s cubic-bezier(0.22, 1, 0.36, 1)`;
-            span.style.transitionDelay = `${i * 0.04}s`;
-            span.style.transformOrigin = 'bottom';
-            el.appendChild(span);
-        });
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                el.classList.add('revealed');
-                el.querySelectorAll('.char').forEach(c => {
-                    c.style.opacity = '1';
-                    c.style.transform = 'translateY(0) rotateX(0)';
-                });
+    function toggleMenu() {
+        if (!fullscreenMenu) return;
+        const isActive = fullscreenMenu.classList.toggle('active');
+        if (menuToggle) {
+            menuToggle.querySelector('.toggle-text').textContent = isActive ? 'Close' : 'Menu';
+        }
+        document.body.style.overflow = isActive ? 'hidden' : '';
+    }
+
+    function closeMenu() {
+        if (!fullscreenMenu) return;
+        fullscreenMenu.classList.remove('active');
+        if (menuToggle) {
+            menuToggle.querySelector('.toggle-text').textContent = 'Menu';
+        }
+        document.body.style.overflow = '';
+    }
+
+    // =========================================
+    // SCROLL REVEAL
+    // =========================================
+    function initScrollReveal() {
+        const items = document.querySelectorAll('[data-reveal]');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
             });
-        });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        items.forEach(item => observer.observe(item));
     }
 
     // =========================================
-    // Hero Counter Animation
+    // WORKS DATA
     // =========================================
-    function animateCounter(el, target, duration) {
-        duration = duration || 1500;
-        let start = 0;
-        const startTime = performance.now();
-        function update(now) {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            el.textContent = Math.floor(eased * target);
-            if (progress < 1) requestAnimationFrame(update);
+    async function loadWorks() {
+        try {
+            // Try localStorage first (for admin updates)
+            const localData = localStorage.getItem('portfolioWorks');
+            if (localData) {
+                const parsed = JSON.parse(localData);
+                if (parsed && parsed.works && parsed.works.length > 0) {
+                    works = parsed.works;
+                    renderWorks(works);
+                    return;
+                }
+            }
+
+            // Fallback to JSON file
+            const res = await fetch('data/works.json?t=' + Date.now());
+            const data = await res.json();
+            works = data.works || [];
+            renderWorks(works);
+        } catch (e) {
+            console.error('Failed to load works:', e);
+            if (worksEmpty) {
+                worksEmpty.style.display = 'block';
+            }
         }
-        requestAnimationFrame(update);
     }
 
-    // =========================================
-    // Hero Init (trigger on load)
-    // =========================================
-    function initHero() {
-        splitTextReveal('.hero-title');
+    function renderWorks(items) {
+        if (!worksGrid) return;
 
-        const counterEl = document.getElementById('workCount');
-        if (counterEl) {
-            const target = parseInt(counterEl.textContent) || 0;
-            counterEl.textContent = '0';
-            setTimeout(function() { animateCounter(counterEl, target); }, 800);
+        if (!items || items.length === 0) {
+            worksGrid.innerHTML = '';
+            if (worksEmpty) worksEmpty.style.display = 'block';
+            return;
         }
 
-        var heroLabel = document.querySelector('.hero-label');
-        if (heroLabel) setTimeout(function() { heroLabel.classList.add('visible'); }, 200);
+        if (worksEmpty) worksEmpty.style.display = 'none';
 
-        var heroDesc = document.querySelector('.hero-desc');
-        if (heroDesc) setTimeout(function() { heroDesc.classList.add('visible'); }, 400);
+        worksGrid.innerHTML = items.map((work, index) => `
+            <div class="work-item" data-index="${index}" data-type="${work.type || 'image'}">
+                ${work.type === 'video' 
+                    ? `<video src="${work.url}" muted loop playsinline></video>`
+                    : `<img src="${work.url}" alt="${work.title}" loading="lazy">`
+                }
+                <div class="work-item-overlay">
+                    <div class="work-item-info">
+                        <div class="work-item-title">${work.title || 'Untitled'}</div>
+                        <div class="work-item-category">${work.category || ''}</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
 
-        var heroActions = document.querySelector('.hero-actions');
-        if (heroActions) setTimeout(function() { heroActions.classList.add('visible'); }, 600);
-
-        var heroScroll = document.querySelector('.hero-scroll');
-        if (heroScroll) setTimeout(function() { heroScroll.classList.add('visible'); }, 800);
-
-        var heroCounter = document.querySelector('.hero-counter');
-        if (heroCounter) setTimeout(function() { heroCounter.classList.add('visible'); }, 900);
-    }
-
-    // =========================================
-    // Magnetic Button Effect
-    // =========================================
-    function initMagneticButtons() {
-        var buttons = document.querySelectorAll('.btn, .contact-email, .social-item');
-        buttons.forEach(function(btn) {
-            btn.addEventListener('mousemove', function(e) {
-                var rect = btn.getBoundingClientRect();
-                var x = e.clientX - rect.left - rect.width / 2;
-                var y = e.clientY - rect.top - rect.height / 2;
-                btn.style.transform = 'translate(' + (x * 0.3) + 'px, ' + (y * 0.3) + 'px)';
+        // Bind click events
+        worksGrid.querySelectorAll('.work-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const index = parseInt(item.dataset.index);
+                openLightbox(index);
             });
-            btn.addEventListener('mouseleave', function() {
-                btn.style.transform = '';
-            });
-        });
-    }
 
-    // =========================================
-    // Parallax
-    // =========================================
-    function initParallax() {
-        var heroTitle = document.querySelector('.hero-title');
-        var heroGlows = document.querySelectorAll('.hero-glow');
-
-        window.addEventListener('scroll', function() {
-            var scrollY = window.scrollY;
-            var heroH = document.querySelector('.hero') ? document.querySelector('.hero').offsetHeight : 0;
-            if (scrollY < heroH) {
-                var p = scrollY / heroH;
-                if (heroTitle) heroTitle.style.transform = 'translateY(' + (scrollY * 0.3) + 'px)';
-                heroGlows.forEach(function(g, i) {
-                    g.style.transform = 'translateY(' + (scrollY * (0.2 + i * 0.1)) + 'px)';
+            // Video hover play
+            const video = item.querySelector('video');
+            if (video) {
+                item.addEventListener('mouseenter', () => video.play());
+                item.addEventListener('mouseleave', () => {
+                    video.pause();
+                    video.currentTime = 0;
                 });
             }
         });
     }
 
     // =========================================
-    // Scroll Animations
+    // FILTER
     // =========================================
-    var observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-            if (entry.isIntersecting) entry.target.classList.add('visible');
+    function initFilter() {
+        const buttons = document.querySelectorAll('.filter-btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.dataset.filter;
+                if (filter === 'all') {
+                    renderWorks(works);
+                } else {
+                    const filtered = works.filter(w => w.type === filter);
+                    renderWorks(filtered);
+                }
+            });
         });
-    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('[data-scroll]').forEach(function(el) {
-        observer.observe(el);
-    });
+    }
 
     // =========================================
-    // Smooth scroll for anchor links
+    // LIGHTBOX
     // =========================================
-    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            var target = document.querySelector(this.getAttribute('href'));
-            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    function openLightbox(index) {
+        if (!lightbox || !works[index]) return;
+        currentWorkIndex = index;
+        const work = works[index];
+
+        lightboxContent.innerHTML = work.type === 'video'
+            ? `<video src="${work.url}" controls autoplay></video>`
+            : `<img src="${work.url}" alt="${work.title}">`;
+
+        lightboxInfo.innerHTML = `<strong>${work.title}</strong><br><span style="color:#666">${work.category || ''}</span>`;
+
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        if (!lightbox) return;
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+        
+        // Stop video if playing
+        const video = lightboxContent.querySelector('video');
+        if (video) {
+            video.pause();
+            video.remove();
+        }
+    }
+
+    function navigateLightbox(dir) {
+        const filtered = getFilteredWorks();
+        const currentFilteredIndex = filtered.findIndex(w => w.id === works[currentWorkIndex]?.id);
+        
+        if (currentFilteredIndex === -1) return;
+        
+        let newIndex = currentFilteredIndex + dir;
+        if (newIndex < 0) newIndex = filtered.length - 1;
+        if (newIndex >= filtered.length) newIndex = 0;
+        
+        const actualIndex = works.findIndex(w => w.id === filtered[newIndex]?.id);
+        if (actualIndex !== -1) {
+            openLightbox(actualIndex);
+        }
+    }
+
+    function getFilteredWorks() {
+        const activeBtn = document.querySelector('.filter-btn.active');
+        if (!activeBtn) return works;
+        
+        const filter = activeBtn.dataset.filter;
+        if (filter === 'all') return works;
+        return works.filter(w => w.type === filter);
+    }
+
+    // =========================================
+    // KEYBOARD NAVIGATION
+    // =========================================
+    function handleKeyboard(e) {
+        if (lightbox && lightbox.classList.contains('active')) {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navigateLightbox(-1);
+            if (e.key === 'ArrowRight') navigateLightbox(1);
+        }
+        if (fullscreenMenu && fullscreenMenu.classList.contains('active')) {
+            if (e.key === 'Escape') closeMenu();
+        }
+    }
+
+    // =========================================
+    // SMOOTH SCROLL
+    // =========================================
+    function initSmoothScroll() {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', (e) => {
+                const href = anchor.getAttribute('href');
+                if (href === '#') return;
+                
+                e.preventDefault();
+                closeMenu();
+                
+                const target = document.querySelector(href);
+                if (target) {
+                    setTimeout(() => {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                }
+            });
         });
-    });
+    }
 
     // =========================================
-    // Init
+    // MAGNETIC HOVER (optional)
     // =========================================
-    initHero();
-    initMagneticButtons();
-    initParallax();
+    function initMagneticHover() {
+        const items = document.querySelectorAll('.menu-item, .contact-email, .btn');
+        
+        items.forEach(item => {
+            item.addEventListener('mousemove', (e) => {
+                const rect = item.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                item.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
+            });
+            
+            item.addEventListener('mouseleave', () => {
+                item.style.transform = '';
+            });
+        });
+    }
 
+    // =========================================
+    // INIT
+    // =========================================
+    function init() {
+        // Prevent scroll during loader
+        document.body.style.overflow = 'hidden';
+
+        // Start loader
+        initLoader();
+
+        // Scroll events
+        window.addEventListener('scroll', updateScrollProgress, { passive: true });
+
+        // Menu
+        if (menuToggle) {
+            menuToggle.addEventListener('click', toggleMenu);
+        }
+        
+        // Menu links
+        document.querySelectorAll('[data-menu]').forEach(link => {
+            link.addEventListener('click', closeMenu);
+        });
+
+        // Load works
+        loadWorks();
+
+        // Filter
+        initFilter();
+
+        // Lightbox
+        if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+        if (lightboxPrev) lightboxPrev.addEventListener('click', () => navigateLightbox(-1));
+        if (lightboxNext) lightboxNext.addEventListener('click', () => navigateLightbox(1));
+        
+        // Click outside lightbox content
+        if (lightbox) {
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) closeLightbox();
+            });
+        }
+
+        // Keyboard
+        document.addEventListener('keydown', handleKeyboard);
+
+        // Smooth scroll
+        initSmoothScroll();
+
+        // Magnetic hover (subtle effect)
+        initMagneticHover();
+
+        // Header scroll effect
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            if (header) {
+                if (currentScroll > lastScroll && currentScroll > 100) {
+                    header.style.transform = 'translateY(-100%)';
+                } else {
+                    header.style.transform = '';
+                }
+            }
+            lastScroll = currentScroll;
+        }, { passive: true });
+    }
+
+    // Run on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 })();
