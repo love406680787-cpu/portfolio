@@ -1514,7 +1514,7 @@
                     const data = JSON.parse(local);
                     if (data?.works?.length > 0) {
                         works = data.works;
-                        renderStackCards(works);
+                        renderWorks('all');
                         return;
                     }
                 }
@@ -1523,9 +1523,10 @@
                 const res = await fetch(cdnUrl + '?t=' + Date.now());
                 const data = await res.json();
                 works = data.works || [];
-                renderStackCards(works);
+                renderWorks('all');
             } catch (e) {
-                if (cardsStack) cardsStack.innerHTML = '<p style="color:var(--muted);padding:40px;text-align:center;">No works yet</p>';
+                console.error('Load works failed:', e);
+                if (arcCarousel) arcCarousel.innerHTML = '<p style="color:var(--muted);padding:40px;text-align:center;width:100%">No works yet</p>';
             }
         }
 
