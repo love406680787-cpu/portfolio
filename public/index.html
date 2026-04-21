@@ -1522,7 +1522,11 @@
                 const cdnUrl = 'https://cdn.jsdelivr.net/gh/love406680787-cpu/portfolio@main/data/works.json';
                 const res = await fetch(cdnUrl + '?t=' + Date.now());
                 const data = await res.json();
-                works = data.works || [];
+                works = (data.works || []).map(w => ({
+                    ...w,
+                    // 将 github.io 图片URL 替换为 jsDelivr CDN
+                    url: w.url?.replace('https://love406680787-cpu.github.io/portfolio/', 'https://cdn.jsdelivr.net/gh/love406680787-cpu/portfolio@main/') || w.url
+                }));
                 renderWorks('all');
             } catch (e) {
                 console.error('Load works failed:', e);
