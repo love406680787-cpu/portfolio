@@ -489,7 +489,7 @@
            ============================== */
         .works-container {
             position: relative;
-            height: 85vh;
+            height: 600px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -515,21 +515,26 @@
             position: relative;
             width: 100%;
             max-width: 1100px;
-            height: 500px;
+            height: 100%;
             perspective: 1200px;
             margin: 0 auto;
         }
 
         .arc-card {
             position: absolute;
-            width: 280px;
+            width: 260px;
             height: 380px;
             left: 50%;
             top: 50%;
+            margin-left: -130px;
+            margin-top: -190px;
             border-radius: 20px;
             overflow: hidden;
             cursor: pointer;
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        z-index 0.5s,
+                        opacity 0.5s,
+                        filter 0.5s;
             transform-style: preserve-3d;
             background: rgba(20, 20, 20, 0.45);
             backdrop-filter: blur(12px);
@@ -539,6 +544,20 @@
                 0 15px 35px rgba(0, 0, 0, 0.6),
                 inset 0 0 25px rgba(0, 255, 136, 0.08);
             will-change: transform, filter;
+        }
+
+        /* 卡片玻璃层 */
+        .arc-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 20px;
+            background: rgba(20, 20, 20, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 25px rgba(0, 255, 136, 0.08);
+            z-index: -1;
         }
 
         .arc-card::before {
@@ -1312,52 +1331,22 @@
         let isHovering = false; // 鼠标是否在作品区域内
         let scrollLocked = false;
 
-        // 弧形排列参数 - 参考液态玻璃视差轮播效果
+        // 弧形排列参数 - 液态玻璃视差轮播效果
         function getArcTransform(index, total, activeIndex) {
-            const offset = index - activeIndex;
-            const absOffset = Math.abs(offset);
+            const diff = index - activeIndex;
+            const absDiff = Math.abs(diff);
             
-            if (absOffset > 3) return { display: 'none' };
-            
-            // 旋转角度（两侧向内倾斜）
-            const rotate = offset * 15;
-            // X轴展开
-            const xSpread = offset * 160;
-            // Y轴下沉（弧形效果）
-            const yOffset = absOffset * 25;
-            // Z深度
-            const zOffset = -absOffset * 60;
-            
-            // 大小递减
-            const scale = offset === 0 ? 1.08 : 1 - absOffset * 0.06;
-            const width = offset === 0 ? 320 : 280 - absOffset * 20;
-            const height = offset === 0 ? 420 : 380 - absOffset * 25;
-            
-            // 透明度递减
-            let opacity = 1;
-            if (absOffset > 0) {
-                opacity = 0.9 - absOffset * 0.18;
-            }
-            
-            // 模糊效果（远处卡片更模糊）
-            let blur = 0;
-            if (absOffset > 0) {
-                blur = absOffset * 2.5;
-            }
+            if (absDiff > 3) return { display: 'none' };
             
             return {
                 display: 'block',
-                width: width + 'px',
-                height: height + 'px',
-                x: xSpread,
-                y: yOffset,
-                z: zOffset,
-                rotation: rotate,
-                scale: scale,
-                opacity: opacity,
-                blur: blur,
-                zIndex: 100 - absOffset,
-                isActive: offset === 0
+                rotate: diff * 15,
+                translateX: diff * 160,
+                translateY: absDiff * 25,
+                zIndex: 100 - absDiff,
+                opacity: absDiff === 0 ? 1 : 0.9 - absDiff * 0.15,
+                blur: absDiff === 0 ? 0 : absDiff * 3,
+                isActive: diff === 0
             };
         }
 
@@ -1409,40 +1398,37 @@
             const total = cards.length;
             
             cards.forEach((card, i) => {
-                const t = getArcTransform(i, total, currentIndex);
+                const diff = i - currentIndex;
+                const absDiff = Math.abs(diff);
                 
-                if (t.display === 'none') {
+                // 超出显示范围的隐藏
+                if (absDiff > 3) {
                     card.style.display = 'none';
                     return;
                 }
                 
                 card.style.display = 'block';
-                card.classList.toggle('active', t.isActive);
+                card.classList.toggle('active', diff === 0);
                 
-                // 应用模糊效果
-                card.style.filter = `blur(${t.blur}px)`;
+                // 参考文件的变换参数
+                const rotate = diff * 15;
+                const translateX = diff * 160;
+                const translateY = absDiff * 25;
+                const zIndex = 100 - absDiff;
                 
-                const props = {
-                    x: t.x,
-                    y: t.y || 0,
-                    z: t.z || 0,
-                    rotation: t.rotation,
-                    scale: t.scale,
-                    opacity: t.opacity,
-                    zIndex: t.zIndex,
-                    width: t.width,
-                    height: t.height
-                };
-                
-                if (animate) {
-                    gsap.to(card, {
-                        ...props,
-                        duration: 0.5,
-                        ease: 'power2.out'
-                    });
-                } else {
-                    gsap.set(card, props);
+                // 模糊和透明度
+                let blurValue = 0;
+                let opacity = 1;
+                if (absDiff > 0) {
+                    blurValue = absDiff * 3;
+                    opacity = 0.9 - absDiff * 0.15;
                 }
+                
+                // 应用样式
+                card.style.transform = `translate3d(calc(-50% + ${translateX}px), ${translateY}px, 0) rotate(${rotate}deg)`;
+                card.style.zIndex = zIndex;
+                card.style.opacity = opacity;
+                card.style.filter = `blur(${blurValue}px)`;
             });
         }
 
