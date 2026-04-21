@@ -560,7 +560,8 @@
             z-index: -1;
         }
 
-        .arc-card::before {
+        /* 卡片顶部高光 */
+        .arc-card::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
@@ -1401,31 +1402,28 @@
                 const diff = i - currentIndex;
                 const absDiff = Math.abs(diff);
                 
-                // 超出显示范围的隐藏
-                if (absDiff > 3) {
-                    card.style.display = 'none';
-                    return;
-                }
-                
+                // 显示所有卡片，但远处的缩小透明
                 card.style.display = 'block';
                 card.classList.toggle('active', diff === 0);
                 
-                // 参考文件的变换参数
-                const rotate = diff * 15;
-                const translateX = diff * 160;
-                const translateY = absDiff * 25;
+                // 弧形排列参数
+                const rotate = diff * 12;
+                const translateX = diff * 180;
+                const translateY = absDiff * 30;
                 const zIndex = 100 - absDiff;
                 
-                // 模糊和透明度
-                let blurValue = 0;
-                let opacity = 1;
-                if (absDiff > 0) {
-                    blurValue = absDiff * 3;
-                    opacity = 0.9 - absDiff * 0.15;
-                }
+                // 模糊和透明度 - 远处卡片更模糊更透明
+                let blurValue = absDiff * 2;
+                let opacity = 1 - absDiff * 0.2;
+                let scale = 1 - absDiff * 0.08;
                 
-                // 应用样式
-                card.style.transform = `translate3d(calc(-50% + ${translateX}px), ${translateY}px, 0) rotate(${rotate}deg)`;
+                // 限制最小值
+                blurValue = Math.min(blurValue, 8);
+                opacity = Math.max(opacity, 0.3);
+                scale = Math.max(scale, 0.6);
+                
+                // 应用样式 - 从中心点偏移
+                card.style.transform = `translate(-50%, -50%) translateX(${translateX}px) translateY(${translateY}px) rotate(${rotate}deg) scale(${scale})`;
                 card.style.zIndex = zIndex;
                 card.style.opacity = opacity;
                 card.style.filter = `blur(${blurValue}px)`;
