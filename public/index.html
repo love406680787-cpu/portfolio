@@ -495,6 +495,20 @@
             justify-content: center;
             overflow: hidden;
             cursor: default;
+            background: radial-gradient(circle at center, rgba(0, 255, 136, 0.06) 0%, var(--bg) 60%);
+        }
+
+        /* 边缘渐隐遮罩层 - 隐藏突兀的卡片边缘 */
+        .works-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 200;
+            background: 
+                linear-gradient(to top, var(--bg) 0%, transparent 15%),
+                linear-gradient(to right, var(--bg) 0%, transparent 10%, transparent 90%, var(--bg) 100%),
+                linear-gradient(to bottom, var(--bg) 0%, transparent 5%);
         }
 
         .arc-carousel {
@@ -517,14 +531,14 @@
             cursor: pointer;
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             transform-style: preserve-3d;
-            background: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(30px) saturate(160%);
-            -webkit-backdrop-filter: blur(30px) saturate(160%);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(20, 20, 20, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 136, 0.3);
             box-shadow:
-                0 8px 40px rgba(0, 0, 0, 0.35),
-                0 0 0 0.5px rgba(255, 255, 255, 0.12) inset,
-                0 1px 0 0 rgba(255, 255, 255, 0.22) inset;
+                0 15px 35px rgba(0, 0, 0, 0.6),
+                inset 0 0 25px rgba(0, 255, 136, 0.08);
+            will-change: transform, filter;
         }
 
         .arc-card::before {
@@ -576,16 +590,21 @@
             letter-spacing: 0.05em;
         }
 
-        /* Active card (center) - biggest */
+        /* Active card (center) - biggest with neon glow */
         .arc-card.active {
             width: 320px;
             height: 420px;
-            z-index: 10 !important;
+            z-index: 100 !important;
+            background: rgba(30, 30, 30, 0.5);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            border: 1px solid rgba(0, 255, 136, 0.6);
             box-shadow:
-                0 20px 60px rgba(0, 0, 0, 0.45),
-                0 0 0 1px var(--accent),
-                0 0 80px rgba(0, 255, 136, 0.12);
-            border-color: rgba(255, 255, 255, 0.2);
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(0, 255, 136, 0.4),
+                0 0 60px rgba(0, 255, 136, 0.2),
+                inset 0 0 30px rgba(0, 255, 136, 0.05);
+            filter: blur(0px) !important;
         }
 
         /* Hint */
@@ -1293,29 +1312,38 @@
         let isHovering = false; // 鼠标是否在作品区域内
         let scrollLocked = false;
 
-        // 弧形排列参数
+        // 弧形排列参数 - 参考液态玻璃视差轮播效果
         function getArcTransform(index, total, activeIndex) {
-            const spread = Math.min(total - 1, 4); // 左右各最多2张可见
             const offset = index - activeIndex;
             const absOffset = Math.abs(offset);
             
-            if (absOffset > 2) return { display: 'none' };
+            if (absOffset > 3) return { display: 'none' };
             
-            // 中间最大，两边递减
-            const scale = offset === 0 ? 1 : 0.82 - absOffset * 0.08;
-            const width = offset === 0 ? 320 : 280 - absOffset * 25;
-            const height = offset === 0 ? 420 : 380 - absOffset * 30;
+            // 旋转角度（两侧向内倾斜）
+            const rotate = offset * 15;
+            // X轴展开
+            const xSpread = offset * 160;
+            // Y轴下沉（弧形效果）
+            const yOffset = absOffset * 25;
+            // Z深度
+            const zOffset = -absOffset * 60;
             
-            // 弧形排列 - X偏移 + Z深度 + Y轴旋转
-            const xSpread = offset * 220;
-            const zOffset = -absOffset * 80;
-            const yRotate = offset * -18; // 负值=向内倾斜（左卡片右倾，右卡片左倾）
-            
-            // 轻微Y偏移让弧线更自然
-            const yOffset = absOffset * 8;
+            // 大小递减
+            const scale = offset === 0 ? 1.08 : 1 - absOffset * 0.06;
+            const width = offset === 0 ? 320 : 280 - absOffset * 20;
+            const height = offset === 0 ? 420 : 380 - absOffset * 25;
             
             // 透明度递减
-            const opacity = offset === 0 ? 1 : 0.7 - absOffset * 0.15;
+            let opacity = 1;
+            if (absOffset > 0) {
+                opacity = 0.9 - absOffset * 0.18;
+            }
+            
+            // 模糊效果（远处卡片更模糊）
+            let blur = 0;
+            if (absOffset > 0) {
+                blur = absOffset * 2.5;
+            }
             
             return {
                 display: 'block',
@@ -1324,10 +1352,11 @@
                 x: xSpread,
                 y: yOffset,
                 z: zOffset,
-                rotationY: yRotate,
+                rotation: rotate,
                 scale: scale,
                 opacity: opacity,
-                zIndex: 10 - absOffset,
+                blur: blur,
+                zIndex: 100 - absOffset,
                 isActive: offset === 0
             };
         }
@@ -1390,11 +1419,14 @@
                 card.style.display = 'block';
                 card.classList.toggle('active', t.isActive);
                 
+                // 应用模糊效果
+                card.style.filter = `blur(${t.blur}px)`;
+                
                 const props = {
                     x: t.x,
                     y: t.y || 0,
                     z: t.z || 0,
-                    rotationY: t.rotationY,
+                    rotation: t.rotation,
                     scale: t.scale,
                     opacity: t.opacity,
                     zIndex: t.zIndex,
@@ -1405,7 +1437,7 @@
                 if (animate) {
                     gsap.to(card, {
                         ...props,
-                        duration: 0.6,
+                        duration: 0.5,
                         ease: 'power2.out'
                     });
                 } else {
