@@ -1278,43 +1278,90 @@
         });
 
         // ==============================
-        // WORKS — 3D Stacked Cards
+        // WORKS — Arc Carousel + Scroll Hijack
         // ==============================
-        const cardsStack = document.getElementById('cardsStack');
+        const arcCarousel = document.getElementById('arcCarousel');
+        const worksContainer = document.getElementById('worksContainer');
         const cardModal = document.getElementById('cardModal');
         const modalMedia = document.getElementById('modalMedia');
         const modalTitle = document.getElementById('modalTitle');
         const modalCat = document.getElementById('modalCat');
         const modalClose = document.getElementById('modalClose');
 
-        function renderStackCards(items) {
-            if (!cardsStack) return;
+        let arcWorks = [];      // 当前过滤后的作品
+        let currentIndex = 0;   // 当前激活的卡片索引
+        let isHovering = false; // 鼠标是否在作品区域内
+        let scrollLocked = false;
 
+        // 弧形排列参数
+        function getArcTransform(index, total, activeIndex) {
+            const spread = Math.min(total - 1, 4); // 左右各最多2张可见
+            const offset = index - activeIndex;
+            const absOffset = Math.abs(offset);
+            
+            if (absOffset > 2) return { display: 'none' };
+            
+            // 中间最大，两边递减
+            const scale = offset === 0 ? 1 : 0.82 - absOffset * 0.08;
+            const width = offset === 0 ? 320 : 280 - absOffset * 25;
+            const height = offset === 0 ? 420 : 380 - absOffset * 30;
+            
+            // 弧形排列 - X偏移 + Z深度 + Y轴旋转
+            const xSpread = offset * 220;
+            const zOffset = -absOffset * 80;
+            const yRotate = offset * -18; // 负值=向内倾斜（左卡片右倾，右卡片左倾）
+            
+            // 轻微Y偏移让弧线更自然
+            const yOffset = absOffset * 8;
+            
+            // 透明度递减
+            const opacity = offset === 0 ? 1 : 0.7 - absOffset * 0.15;
+            
+            return {
+                display: 'block',
+                width: width + 'px',
+                height: height + 'px',
+                x: xSpread,
+                y: yOffset,
+                z: zOffset,
+                rotationY: yRotate,
+                scale: scale,
+                opacity: opacity,
+                zIndex: 10 - absOffset,
+                isActive: offset === 0
+            };
+        }
+
+        function renderArcCards(items) {
+            if (!arcCarousel) return;
+            
             if (items.length === 0) {
-                cardsStack.innerHTML = '<p style="color:var(--muted);padding:40px;text-align:center;">No works yet</p>';
+                arcCarousel.innerHTML = '<p style="color:var(--muted);padding:40px;text-align:center;width:100%">No works yet</p>';
                 return;
             }
-
-            // 最多显示5张卡片
-            const showCards = items.slice(0, 5);
-
-            cardsStack.innerHTML = showCards.map((work, i) => `
-                <div class="stack-card glass-card" data-index="${i}">
-                    <div class="stack-card-img">
+            
+            arcWorks = items;
+            currentIndex = 0;
+            
+            arcCarousel.innerHTML = items.map((work, i) => `
+                <div class="arc-card" data-index="${i}">
+                    <div class="arc-card-img">
                         ${work.type === 'video'
                             ? `<video src="${work.url}" muted loop playsinline></video>`
                             : `<img src="${work.url}" alt="${work.title}" loading="lazy">`
                         }
                     </div>
-                    <div class="stack-card-info">
-                        <div class="stack-card-title">${work.title}</div>
-                        <div class="stack-card-cat">${work.category || ''}</div>
+                    <div class="arc-card-info">
+                        <div>
+                            <div class="arc-card-title">${work.title}</div>
+                            <div class="arc-card-cat">${work.category || ''}</div>
+                        </div>
                     </div>
                 </div>
             `).join('');
-
+            
             // 事件绑定
-            cardsStack.querySelectorAll('.stack-card').forEach((card, i) => {
+            arcCarousel.querySelectorAll('.arc-card').forEach((card, i) => {
                 const video = card.querySelector('video');
                 if (video) {
                     card.addEventListener('mouseenter', () => video.play());
@@ -1322,21 +1369,87 @@
                 }
                 card.addEventListener('mouseenter', () => cursor.classList.add('hover'));
                 card.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-                
-                // 点击打开详情
                 card.addEventListener('click', () => openModal(items[i]));
             });
+            
+            updateArcPositions();
+        }
 
-            // 动画入场
-            gsap.from('.stack-card', {
-                opacity: 0,
-                y: 60,
-                rotateX: -20,
-                duration: 0.8,
-                stagger: 0.1,
-                ease: 'power2.out'
+        function updateArcPositions(animate = true) {
+            const cards = arcCarousel.querySelectorAll('.arc-card');
+            const total = cards.length;
+            
+            cards.forEach((card, i) => {
+                const t = getArcTransform(i, total, currentIndex);
+                
+                if (t.display === 'none') {
+                    card.style.display = 'none';
+                    return;
+                }
+                
+                card.style.display = 'block';
+                card.classList.toggle('active', t.isActive);
+                
+                const props = {
+                    x: t.x,
+                    y: t.y || 0,
+                    z: t.z || 0,
+                    rotationY: t.rotationY,
+                    scale: t.scale,
+                    opacity: t.opacity,
+                    zIndex: t.zIndex,
+                    width: t.width,
+                    height: t.height
+                };
+                
+                if (animate) {
+                    gsap.to(card, {
+                        ...props,
+                        duration: 0.6,
+                        ease: 'power2.out'
+                    });
+                } else {
+                    gsap.set(card, props);
+                }
             });
         }
+
+        function navigateArc(direction) {
+            const total = arcWorks.length;
+            if (total <= 1) return;
+            
+            const nextIndex = (currentIndex + direction + total) % total;
+            currentIndex = nextIndex;
+            updateArcPositions(true);
+        }
+
+        // ===== SCROLL HIJACK =====
+        // 鼠标进入作品区域 → 滚轮控制卡片切换
+        // 鼠标移开 → 恢复页面滚动
+        
+        worksContainer?.addEventListener('mouseenter', () => {
+            isHovering = true;
+            document.body.style.overflow = 'hidden';
+        });
+        
+        worksContainer?.addEventListener('mouseleave', () => {
+            isHovering = false;
+            document.body.style.overflow = '';
+        });
+        
+        worksContainer?.addEventListener('wheel', (e) => {
+            if (!isHovering) return;
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (scrollLocked) return;
+            scrollLocked = true;
+            
+            const direction = e.deltaY > 0 ? 1 : -1; // 下滚→下一张，上滚→上一张
+            navigateArc(direction);
+            
+            setTimeout(() => { scrollLocked = false; }, 400); // 防抖
+        }, { passive: false });
 
         function openModal(work) {
             if (!work || !cardModal) return;
@@ -1381,7 +1494,7 @@
         function renderWorks(filter) {
             let items = works;
             if (filter !== 'all') items = works.filter(w => w.type === filter);
-            renderStackCards(items);
+            renderArcCards(items);
         }
 
         // Filter Buttons
