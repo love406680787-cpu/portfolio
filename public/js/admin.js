@@ -172,6 +172,8 @@
     async function saveWorksToGitHub(works) {
         const content = JSON.stringify({ works, updated: new Date().toISOString() }, null, 2);
         await saveFile(WORKS_FILE, content, 'Update works.json');
+        // 同步写入 localStorage，前台页面可立即读取
+        localStorage.setItem('portfolioWorks', content);
     }
 
     // =========================================

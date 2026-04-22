@@ -1524,25 +1524,37 @@
 
         // Load Works
         async function loadWorks() {
-            try {
-                const local = localStorage.getItem('portfolioWorks');
-                if (local) {
+            // 1. 优先读 localStorage（后台保存时同步写入的）
+            const local = localStorage.getItem('portfolioWorks');
+            if (local) {
+                try {
                     const data = JSON.parse(local);
                     if (data?.works?.length > 0) {
                         works = data.works;
                         renderWorks('all');
+                        // 后台静默从CDN更新（不阻塞渲染）
+                        refreshFromCDN();
                         return;
                     }
-                }
-                // 从 jsDelivr CDN 加载 GitHub 上的作品数据
+                } catch (e) { /* localStorage损坏则走CDN */ }
+            }
+            
+            // 2. 没有localStorage数据，走CDN
+            await refreshFromCDN();
+        }
+        
+        // 从CDN静默更新，成功后刷新页面显示
+        async function refreshFromCDN() {
+            try {
                 const cdnUrl = 'https://cdn.jsdelivr.net/gh/love406680787-cpu/portfolio@main/data/works.json';
                 const res = await fetch(cdnUrl + '?t=' + Date.now());
                 const data = await res.json();
                 works = (data.works || []).map(w => ({
                     ...w,
-                    // 将 github.io 图片URL 替换为 jsDelivr CDN
                     url: w.url?.replace('https://love406680787-cpu.github.io/portfolio/', 'https://cdn.jsdelivr.net/gh/love406680787-cpu/portfolio@main/') || w.url
                 }));
+                // 同步到localStorage供下次使用
+                localStorage.setItem('portfolioWorks', JSON.stringify({ works, updated: new Date().toISOString() }));
                 renderWorks('all');
             } catch (e) {
                 console.error('Load works failed:', e);
