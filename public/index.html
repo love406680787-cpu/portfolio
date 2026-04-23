@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio</title>
     
-    <!-- Fonts: Clash Display + Satoshi -->
+    <!-- Fonts: Space Grotesk -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -398,9 +398,7 @@
             border-bottom: none;
         }
 
-        /* ==============================
-           WORKS Header + Filter
-           ============================== */
+        /* WORKS Header + Filter */
         .works-header {
             padding: 80px 48px 0;
             display: flex;
@@ -438,55 +436,7 @@
             border-color: rgba(255,255,255,0.2);
         }
 
-        /* ==============================
-           LIQUID GLASS CARD (iOS style)
-           ============================== */
-        .glass-card {
-            /* iOS liquid glass */
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            /* Refraction shine top edge */
-            box-shadow:
-                0 0 0 0.5px rgba(255, 255, 255, 0.15) inset,
-                0 1px 0 0 rgba(255, 255, 255, 0.25) inset,
-                0 -1px 0 0 rgba(255, 255, 255, 0.05) inset,
-                0 20px 60px rgba(0, 0, 0, 0.4),
-                0 0 40px rgba(255, 255, 255, 0.03);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg,
-                transparent 0%,
-                rgba(255, 255, 255, 0.4) 30%,
-                rgba(255, 255, 255, 0.4) 70%,
-                transparent 100%);
-        }
-
-        .glass-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 30%,
-                rgba(255, 255, 255, 0.06) 0%,
-                transparent 60%);
-            pointer-events: none;
-        }
-
-        /* ==============================
-           WORKS — Arc Card Carousel (Pinterest style)
-           ============================== */
+        /* WORKS — Arc Card Carousel */
         .works-container {
             position: relative;
             height: 600px;
@@ -496,9 +446,10 @@
             overflow: hidden;
             cursor: default;
             background: radial-gradient(circle at center, rgba(0, 255, 136, 0.06) 0%, var(--bg) 60%);
+            /* Fix for touch devices to allow swipe */
+            touch-action: pan-y;
         }
 
-        /* 边缘渐隐遮罩层 - 隐藏突兀的卡片边缘 */
         .works-container::after {
             content: '';
             position: absolute;
@@ -544,7 +495,6 @@
             will-change: transform, filter;
         }
 
-        /* 卡片玻璃层 */
         .arc-card::before {
             content: '';
             position: absolute;
@@ -558,7 +508,6 @@
             z-index: -1;
         }
 
-        /* 卡片顶部高光 */
         .arc-card::after {
             content: '';
             position: absolute;
@@ -608,7 +557,6 @@
             letter-spacing: 0.05em;
         }
 
-        /* Active card (center) - biggest with neon glow */
         .arc-card.active {
             width: 320px;
             height: 420px;
@@ -625,7 +573,6 @@
             filter: blur(0px) !important;
         }
 
-        /* Hint */
         .arc-hint {
             position: absolute;
             bottom: 24px;
@@ -639,16 +586,7 @@
 
         .works-container:hover .arc-hint { opacity: 0; }
 
-        .cards-hint-text {
-            font-size: 11px;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--muted);
-        }
-
-        /* ==============================
-           CARD DETAIL MODAL
-           ============================== */
+        /* CARD DETAIL MODAL */
         .card-modal {
             position: fixed;
             inset: 0;
@@ -882,16 +820,6 @@
             transform: scaleX(0);
         }
 
-        /* Reveal Animation */
-        .reveal {
-            overflow: hidden;
-        }
-
-        .reveal span {
-            display: inline-block;
-            transform: translateY(100%);
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
             .header {
@@ -919,17 +847,11 @@
     </style>
 </head>
 <body>
-    <!-- Custom Cursor -->
     <div class="cursor"></div>
     <div class="cursor-dot"></div>
-
-    <!-- Noise Overlay -->
     <div class="noise"></div>
-
-    <!-- Scroll Progress -->
     <div class="scroll-progress"></div>
 
-    <!-- Page Loader -->
     <div class="loader">
         <div class="loader-text">
             <span>L</span><span>O</span><span>A</span><span>D</span><span>I</span><span>N</span><span>G</span>
@@ -939,7 +861,6 @@
         </div>
     </div>
 
-    <!-- Header -->
     <header class="header">
         <a href="#" class="logo">Portfolio</a>
         <button class="menu-btn">
@@ -948,7 +869,6 @@
         </button>
     </header>
 
-    <!-- Fullscreen Menu -->
     <nav class="menu">
         <div class="menu-inner">
             <a href="#about" class="menu-item"><span>About</span></a>
@@ -959,7 +879,6 @@
         </div>
     </nav>
 
-    <!-- Hero -->
     <section class="hero" id="about">
         <div class="section-inner">
             <div class="section-label">
@@ -983,7 +902,6 @@
         </div>
     </section>
 
-    <!-- Services -->
     <section id="services">
         <div class="section-inner">
             <div class="section-label">
@@ -1025,7 +943,6 @@
         </div>
     </section>
 
-    <!-- Works -->
     <section id="works">
         <div class="works-header">
             <div class="section-label">
@@ -1041,12 +958,11 @@
         <div class="works-container" id="worksContainer">
             <div class="arc-carousel" id="arcCarousel"></div>
             <div class="arc-hint">
-                <span>Scroll to navigate · Click to view</span>
+                <span>Scroll / Swipe to navigate · Click to view</span>
             </div>
         </div>
     </section>
 
-    <!-- Card Detail Modal -->
     <div class="card-modal" id="cardModal">
         <div class="card-modal-inner">
             <div class="card-modal-media" id="modalMedia"></div>
@@ -1060,7 +976,6 @@
         </div>
     </div>
 
-    <!-- Trust -->
     <section id="trust">
         <div class="section-inner">
             <div class="section-label">
@@ -1070,44 +985,26 @@
         </div>
         <div class="trust">
             <div class="marquee">
-                <span class="marquee-item">Louis Vuitton</span>
-                <span class="marquee-dot">●</span>
-                <span class="marquee-item">Chanel</span>
-                <span class="marquee-dot">●</span>
-                <span class="marquee-item">Dior</span>
-                <span class="marquee-dot">●</span>
-                <span class="marquee-item">OnePlus</span>
-                <span class="marquee-dot">●</span>
-                <span class="marquee-item">L'Oreal</span>
-                <span class="marquee-dot">●</span>
-                <span class="marquee-item">The North Face</span>
-                <span class="marquee-dot">●</span>
-                <span class="marquee-item">Oppo</span>
-                <span class="marquee-dot">●</span>
-                <span class="marquee-item">Glossier</span>
-                <span class="marquee-dot">●</span>
-                <!-- Duplicate for seamless loop -->
-                <span class="marquee-item">Louis Vuitton</span>
-                <span class="marquee-dot">●</span>
-                <span class="marquee-item">Chanel</span>
-                <span class="marquee-dot">●</span>
-                <span class="marquee-item">Dior</span>
-                <span class="marquee-dot">●</span>
-                <span class="marquee-item">OnePlus</span>
-                <span class="marquee-dot">●</span>
-                <span class="marquee-item">L'Oreal</span>
-                <span class="marquee-dot">●</span>
-                <span class="marquee-item">The North Face</span>
-                <span class="marquee-dot">●</span>
-                <span class="marquee-item">Oppo</span>
-                <span class="marquee-dot">●</span>
-                <span class="marquee-item">Glossier</span>
-                <span class="marquee-dot">●</span>
+                <span class="marquee-item">Louis Vuitton</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">Chanel</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">Dior</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">OnePlus</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">L'Oreal</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">The North Face</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">Oppo</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">Glossier</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">Louis Vuitton</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">Chanel</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">Dior</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">OnePlus</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">L'Oreal</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">The North Face</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">Oppo</span><span class="marquee-dot">●</span>
+                <span class="marquee-item">Glossier</span><span class="marquee-dot">●</span>
             </div>
         </div>
     </section>
 
-    <!-- Contact -->
     <section class="contact" id="contact">
         <div class="section-inner">
             <div class="section-label">
@@ -1127,7 +1024,6 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-inner">
             <div class="footer-copy">© 2026 Portfolio. All rights reserved.</div>
@@ -1140,12 +1036,9 @@
     </footer>
 
     <script>
-        // Register GSAP plugins
         gsap.registerPlugin(ScrollTrigger);
 
-        // State
         let works = [];
-        const worksGrid = document.getElementById('worksGrid');
         const loader = document.querySelector('.loader');
         const loaderBar = document.querySelector('.loader-bar');
         const menu = document.querySelector('.menu');
@@ -1176,38 +1069,23 @@
         }
         animateCursor();
 
-        // Cursor hover states
         document.querySelectorAll('a, button, .work-item').forEach(el => {
             el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
             el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
         });
 
-        // Loader
         function initLoader() {
             const tl = gsap.timeline();
-            
-            // Animate loader text
-            tl.to('.loader-text span', {
-                y: 0,
-                opacity: 1,
-                duration: 0.5,
-                stagger: 0.05,
-                ease: 'power2.out'
-            });
+            tl.to('.loader-text span', { y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: 'power2.out' });
 
-            // Fake progress
             let progress = 0;
             const interval = setInterval(() => {
                 progress += Math.random() * 20 + 10;
                 if (progress >= 100) {
                     progress = 100;
                     clearInterval(interval);
-                    
-                    // Hide loader
                     gsap.to(loader, {
-                        opacity: 0,
-                        duration: 0.6,
-                        delay: 0.3,
+                        opacity: 0, duration: 0.6, delay: 0.3,
                         onComplete: () => {
                             loader.style.display = 'none';
                             initAnimations();
@@ -1218,105 +1096,45 @@
             }, 100);
         }
 
-        // Main Animations
         function initAnimations() {
-            // Hero title reveal
-            gsap.to('.hero-title .line span', {
-                y: 0,
-                duration: 1.2,
-                stagger: 0.1,
-                ease: 'power3.out',
-                delay: 0.2
-            });
+            gsap.to('.hero-title .line span', { y: 0, duration: 1.2, stagger: 0.1, ease: 'power3.out', delay: 0.2 });
+            gsap.to('.hero-desc', { opacity: 1, duration: 1, delay: 0.8 });
+            gsap.to('.hero-scroll', { opacity: 1, duration: 1, delay: 1.2 });
 
-            // Hero desc fade in
-            gsap.to('.hero-desc', {
-                opacity: 1,
-                duration: 1,
-                delay: 0.8
-            });
-
-            // Hero scroll indicator
-            gsap.to('.hero-scroll', {
-                opacity: 1,
-                duration: 1,
-                delay: 1.2
-            });
-
-            // Scroll Progress
             gsap.to(scrollProgress, {
-                scaleX: 1,
-                ease: 'none',
-                scrollTrigger: {
-                    trigger: document.body,
-                    start: 'top top',
-                    end: 'bottom bottom',
-                    scrub: true
-                }
+                scaleX: 1, ease: 'none',
+                scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: true }
             });
 
-            // Section reveals
             gsap.utils.toArray('section:not(.hero)').forEach(section => {
                 const label = section.querySelector('.section-label');
                 if (label) {
                     gsap.from(label, {
-                        y: 40,
-                        opacity: 0,
-                        duration: 1,
-                        ease: 'power2.out',
-                        scrollTrigger: {
-                            trigger: section,
-                            start: 'top 80%',
-                            toggleActions: 'play none none reverse'
-                        }
+                        y: 40, opacity: 0, duration: 1, ease: 'power2.out',
+                        scrollTrigger: { trigger: section, start: 'top 80%', toggleActions: 'play none none reverse' }
                     });
                 }
             });
 
-            // Services items
-            gsap.utils.toArray('.service-item').forEach((item, i) => {
+            gsap.utils.toArray('.service-item').forEach((item) => {
                 gsap.from(item, {
-                    y: 60,
-                    opacity: 0,
-                    duration: 1,
-                    ease: 'power2.out',
-                    scrollTrigger: {
-                        trigger: item,
-                        start: 'top 85%',
-                        toggleActions: 'play none none reverse'
-                    }
+                    y: 60, opacity: 0, duration: 1, ease: 'power2.out',
+                    scrollTrigger: { trigger: item, start: 'top 85%', toggleActions: 'play none none reverse' }
                 });
             });
 
-            // Contact title
             gsap.from('.contact-title', {
-                y: 80,
-                opacity: 0,
-                duration: 1.2,
-                ease: 'power2.out',
-                scrollTrigger: {
-                    trigger: '.contact',
-                    start: 'top 70%',
-                    toggleActions: 'play none none reverse'
-                }
+                y: 80, opacity: 0, duration: 1.2, ease: 'power2.out',
+                scrollTrigger: { trigger: '.contact', start: 'top 70%', toggleActions: 'play none none reverse' }
             });
         }
 
-        // Menu Toggle
-        menuBtn.addEventListener('click', () => {
-            menu.classList.toggle('active');
-        });
-
-        // Close menu on link click
+        menuBtn.addEventListener('click', () => menu.classList.toggle('active'));
         document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', () => {
-                menu.classList.remove('active');
-            });
+            item.addEventListener('click', () => menu.classList.remove('active'));
         });
 
-        // ==============================
-        // WORKS — Arc Carousel + Scroll Hijack
-        // ==============================
+        // WORKS Carousel
         const arcCarousel = document.getElementById('arcCarousel');
         const worksContainer = document.getElementById('worksContainer');
         const cardModal = document.getElementById('cardModal');
@@ -1325,38 +1143,17 @@
         const modalCat = document.getElementById('modalCat');
         const modalClose = document.getElementById('modalClose');
 
-        let arcWorks = [];      // 当前过滤后的作品
-        let currentIndex = 0;   // 当前激活的卡片索引
-        let isHovering = false; // 鼠标是否在作品区域内
+        let arcWorks = [];
+        let currentIndex = 0;
+        let isHovering = false;
         let scrollLocked = false;
-
-        // 弧形排列参数 - 液态玻璃视差轮播效果
-        function getArcTransform(index, total, activeIndex) {
-            const diff = index - activeIndex;
-            const absDiff = Math.abs(diff);
-            
-            if (absDiff > 3) return { display: 'none' };
-            
-            return {
-                display: 'block',
-                rotate: diff * 15,
-                translateX: diff * 160,
-                translateY: absDiff * 25,
-                zIndex: 100 - absDiff,
-                opacity: absDiff === 0 ? 1 : 0.9 - absDiff * 0.15,
-                blur: absDiff === 0 ? 0 : absDiff * 3,
-                isActive: diff === 0
-            };
-        }
 
         function renderArcCards(items) {
             if (!arcCarousel) return;
-            
             if (items.length === 0) {
                 arcCarousel.innerHTML = '<p style="color:var(--muted);padding:40px;text-align:center;width:100%">No works yet</p>';
                 return;
             }
-            
             arcWorks = items;
             currentIndex = 0;
             
@@ -1377,7 +1174,6 @@
                 </div>
             `).join('');
             
-            // 事件绑定
             arcCarousel.querySelectorAll('.arc-card').forEach((card, i) => {
                 const video = card.querySelector('video');
                 if (video) {
@@ -1388,39 +1184,33 @@
                 card.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
                 card.addEventListener('click', () => openModal(items[i]));
             });
-            
             updateArcPositions();
         }
 
-        function updateArcPositions(animate = true) {
+        function updateArcPositions() {
             const cards = arcCarousel.querySelectorAll('.arc-card');
             const total = cards.length;
             
             cards.forEach((card, i) => {
-                const diff = i - currentIndex;
-                const absDiff = Math.abs(diff);
+                let diff = i - currentIndex;
                 
-                // 显示所有卡片，但远处的缩小透明
+                // Bug Fix 1: 处理环形轮播的最短路径算法，防止首尾切换时视觉崩塌
+                if (diff > total / 2) diff -= total;
+                if (diff < -total / 2) diff += total;
+                
+                const absDiff = Math.abs(diff);
                 card.style.display = 'block';
                 card.classList.toggle('active', diff === 0);
                 
-                // 弧形排列参数
                 const rotate = diff * 12;
                 const translateX = diff * 180;
                 const translateY = absDiff * 30;
                 const zIndex = 100 - absDiff;
                 
-                // 模糊和透明度 - 远处卡片更模糊更透明
-                let blurValue = absDiff * 2;
-                let opacity = 1 - absDiff * 0.2;
-                let scale = 1 - absDiff * 0.08;
+                let blurValue = Math.min(absDiff * 2, 8);
+                let opacity = Math.max(1 - absDiff * 0.2, 0.3);
+                let scale = Math.max(1 - absDiff * 0.08, 0.6);
                 
-                // 限制最小值
-                blurValue = Math.min(blurValue, 8);
-                opacity = Math.max(opacity, 0.3);
-                scale = Math.max(scale, 0.6);
-                
-                // 应用样式 - 从中心点偏移
                 card.style.transform = `translate(-50%, -50%) translateX(${translateX}px) translateY(${translateY}px) rotate(${rotate}deg) scale(${scale})`;
                 card.style.zIndex = zIndex;
                 card.style.opacity = opacity;
@@ -1431,43 +1221,42 @@
         function navigateArc(direction) {
             const total = arcWorks.length;
             if (total <= 1) return;
-            
-            const nextIndex = (currentIndex + direction + total) % total;
-            currentIndex = nextIndex;
-            updateArcPositions(true);
+            currentIndex = (currentIndex + direction + total) % total;
+            updateArcPositions();
         }
 
-        // ===== SCROLL HIJACK =====
-        // 鼠标进入作品区域 → 滚轮控制卡片切换
-        // 鼠标移开 → 恢复页面滚动
-        
-        worksContainer?.addEventListener('mouseenter', () => {
-            isHovering = true;
-            document.body.style.overflow = 'hidden';
-        });
-        
-        worksContainer?.addEventListener('mouseleave', () => {
-            isHovering = false;
-            document.body.style.overflow = '';
-        });
+        // Bug Fix 2: 移除了在 mouseenter 时设置 document.body.style.overflow = 'hidden'，修复致命的滚动陷阱
+        worksContainer?.addEventListener('mouseenter', () => isHovering = true);
+        worksContainer?.addEventListener('mouseleave', () => isHovering = false);
         
         worksContainer?.addEventListener('wheel', (e) => {
             if (!isHovering) return;
-            e.preventDefault();
+            e.preventDefault(); // 仅阻止容器内的原生滚动，防止页面抖动
             e.stopPropagation();
             
             if (scrollLocked) return;
             scrollLocked = true;
             
-            const direction = e.deltaY > 0 ? 1 : -1; // 下滚→下一张，上滚→上一张
+            const direction = e.deltaY > 0 ? 1 : -1;
             navigateArc(direction);
             
-            setTimeout(() => { scrollLocked = false; }, 400); // 防抖
+            setTimeout(() => { scrollLocked = false; }, 400);
         }, { passive: false });
+
+        // Bug Fix 3: 新增移动端触摸支持 (Swipe)
+        let touchStartX = 0;
+        worksContainer?.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        
+        worksContainer?.addEventListener('touchend', e => {
+            const touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 50) navigateArc(1); // 向左滑，下一张
+            if (touchEndX - touchStartX > 50) navigateArc(-1); // 向右滑，上一张
+        }, { passive: true });
 
         function openModal(work) {
             if (!work || !cardModal) return;
-            
             modalTitle.textContent = work.title;
             modalCat.textContent = work.category || '';
             
@@ -1476,7 +1265,6 @@
             } else {
                 modalMedia.innerHTML = `<img src="${work.url}" alt="${work.title}">`;
             }
-            
             cardModal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
@@ -1485,33 +1273,19 @@
             if (!cardModal) return;
             cardModal.classList.remove('active');
             document.body.style.overflow = '';
-            
-            // 停止视频
             const video = modalMedia?.querySelector('video');
             if (video) { video.pause(); video.remove(); }
         }
 
         if (modalClose) modalClose.addEventListener('click', closeModal);
-        if (cardModal) {
-            cardModal.addEventListener('click', (e) => {
-                if (e.target === cardModal) closeModal();
-            });
-        }
-
-        // ESC 关闭
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && cardModal?.classList.contains('active')) {
-                closeModal();
-            }
-        });
+        if (cardModal) cardModal.addEventListener('click', (e) => { if (e.target === cardModal) closeModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && cardModal?.classList.contains('active')) closeModal(); });
 
         function renderWorks(filter) {
-            let items = works;
-            if (filter !== 'all') items = works.filter(w => w.type === filter);
+            let items = filter === 'all' ? works : works.filter(w => w.type === filter);
             renderArcCards(items);
         }
 
-        // Filter Buttons
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -1520,9 +1294,7 @@
             });
         });
 
-        // Load Works
         async function loadWorks() {
-            // 1. 优先读 localStorage（后台保存时同步写入的）
             const local = localStorage.getItem('portfolioWorks');
             if (local) {
                 try {
@@ -1530,18 +1302,14 @@
                     if (data?.works?.length > 0) {
                         works = data.works;
                         renderWorks('all');
-                        // 后台静默从CDN更新（不阻塞渲染）
                         refreshFromCDN();
                         return;
                     }
-                } catch (e) { /* localStorage损坏则走CDN */ }
+                } catch (e) {}
             }
-            
-            // 2. 没有localStorage数据，走CDN
             await refreshFromCDN();
         }
         
-        // 从CDN静默更新，成功后刷新页面显示
         async function refreshFromCDN() {
             try {
                 const cdnUrl = 'https://cdn.jsdelivr.net/gh/love406680787-cpu/portfolio@main/data/works.json';
@@ -1551,16 +1319,13 @@
                     ...w,
                     url: w.url?.replace('https://love406680787-cpu.github.io/portfolio/', 'https://cdn.jsdelivr.net/gh/love406680787-cpu/portfolio@main/') || w.url
                 }));
-                // 同步到localStorage供下次使用
                 localStorage.setItem('portfolioWorks', JSON.stringify({ works, updated: new Date().toISOString() }));
                 renderWorks('all');
             } catch (e) {
-                console.error('Load works failed:', e);
                 if (arcCarousel) arcCarousel.innerHTML = '<p style="color:var(--muted);padding:40px;text-align:center;width:100%">No works yet</p>';
             }
         }
 
-        // Init
         loadWorks();
         initLoader();
     </script>
