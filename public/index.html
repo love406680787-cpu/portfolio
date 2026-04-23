@@ -200,14 +200,51 @@
         /* Hero */
         .hero { min-height: 100vh; display: flex; align-items: center; }
         .hero-content { max-width: 1000px; position: relative; z-index: 1; }
-        .hero-title {
-            font-size: clamp(48px, 10vw, 130px); font-weight: 700; line-height: 1; letter-spacing: -0.04em; margin-bottom: 32px; will-change: transform;
-        }
-        .hero-title .line { display: block; overflow: hidden; padding-bottom: 8px; }
-        .hero-title .line span { display: inline-block; transform: translateY(110%) rotate(2deg); transform-origin: top left; }
-        .hero-title em { font-style: normal; color: var(--accent); position: relative; }
         
-        .hero-desc { font-size: 18px; color: var(--muted); max-width: 500px; line-height: 1.7; opacity: 0; will-change: transform, opacity; }
+        .hero-title-container {
+            position: relative;
+            margin-bottom: 40px;
+            will-change: transform;
+            cursor: crosshair;
+        }
+        .hero-title-massive {
+            font-size: clamp(60px, 15vw, 250px);
+            font-weight: 700;
+            line-height: 0.85;
+            letter-spacing: -0.04em;
+            margin: 0;
+            white-space: nowrap;
+            user-select: none;
+        }
+        .hero-title-massive.outline {
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+            transition: -webkit-text-stroke 0.4s ease;
+        }
+        .hero-title-container:hover .hero-title-massive.outline {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
+        }
+        .hero-title-massive.fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: var(--accent);
+            pointer-events: none;
+            clip-path: circle(0px at 50% 50%);
+            background: linear-gradient(135deg, var(--fg) 0%, var(--accent) 50%, #00aaff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 40px rgba(0, 255, 136, 0.4));
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--muted);
+            max-width: 600px;
+            line-height: 1.6;
+            opacity: 0;
+            will-change: transform, opacity;
+        }
         
         .hero-scroll {
             position: absolute; bottom: 48px; left: 48px; display: flex; align-items: center; gap: 12px;
@@ -425,14 +462,15 @@
                 <span class="section-title">About Us</span>
             </div>
             <div class="hero-content">
-                <h1 class="hero-title" data-speed="0.95">
-                    <div class="line"><span data-text="We craft work that">We craft work that</span></div>
-                    <div class="line"><span data-text="defines the now">defines the <em data-text="now">now</em></span></div>
-                    <div class="line"><span data-text="and shapes what's next.">and shapes what's next.</span></div>
-                </h1>
-                <p class="hero-desc" data-speed="1.1">
-                    Driven by curiosity, not formula. We explore where creativity and technology collide — across brand, film, immersive spaces, and whatever medium the work demands next.
-                </p>
+                <div class="hero-title-container" data-speed="0.95">
+                    <h1 class="hero-title-massive outline">PORTFOLIO</h1>
+                    <h1 class="hero-title-massive fill" aria-hidden="true">PORTFOLIO</h1>
+                </div>
+                <div class="hero-subtitle" data-speed="1.1">
+                    <span class="scramble-target" data-text="Driven by curiosity, not formula.">Driven by curiosity, not formula.</span>
+                    <br>
+                    <span class="scramble-target" data-text="We explore where creativity and technology collide.">We explore where creativity and technology collide.</span>
+                </div>
             </div>
             <div class="hero-scroll">
                 <div class="scroll-line"></div>
@@ -706,10 +744,36 @@
             }
             animateCursor();
 
-            const hoverTargets = document.querySelectorAll('a, button, .filter-btn, .arc-card, .menu-item');
+            const hoverTargets = document.querySelectorAll('a, button, .filter-btn, .arc-card, .menu-item, .hero-title-container');
             hoverTargets.forEach(el => {
                 el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
                 el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+            });
+        }
+
+        // Hero Portfolio Title Spotlight Effect
+        const titleContainer = document.querySelector('.hero-title-container');
+        const titleFill = document.querySelector('.hero-title-massive.fill');
+        
+        if (titleContainer && titleFill) {
+            titleContainer.addEventListener('mousemove', (e) => {
+                const rect = titleContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                gsap.to(titleFill, {
+                    clipPath: `circle(180px at ${x}px ${y}px)`,
+                    duration: 0.4,
+                    ease: "power2.out"
+                });
+            });
+            
+            titleContainer.addEventListener('mouseleave', () => {
+                gsap.to(titleFill, {
+                    clipPath: `circle(0px at 50% 50%)`,
+                    duration: 0.6,
+                    ease: "power2.out"
+                });
             });
         }
 
@@ -853,11 +917,13 @@
 
         // Reveal Animations
         function initAnimations() {
-            // Trigger Hero Scramble
-            triggerScramble(document.querySelectorAll('.hero-title span[data-text]'));
+            // Hero Title Entrance
+            gsap.from('.hero-title-container', { y: 100, opacity: 0, duration: 1.5, ease: "expo.out", delay: 0.1 });
+            
+            // Subtitle Entrance & Scramble
+            gsap.to('.hero-subtitle', { y: 0, opacity: 1, duration: 1.2, ease: "power2.out", delay: 0.4 });
+            triggerScramble(document.querySelectorAll('.hero-subtitle .scramble-target'));
 
-            gsap.to('.hero-title .line span:not([data-text])', { y: 0, rotate: 0, duration: 1.4, stagger: 0.1, ease: "expo.out", delay: 0.1 });
-            gsap.to('.hero-desc', { y: 0, opacity: 1, duration: 1.2, ease: "power2.out", delay: 0.8 });
             gsap.to('.hero-scroll', { opacity: 1, duration: 1, delay: 1.2 });
 
             gsap.to(scrollProgress, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: true }});
