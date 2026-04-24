@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio</title>
     
-    <!-- Fonts: Space Grotesk -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     
-    <!-- Lenis (Smooth Scrolling) -->
+    <!-- Lenis -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
     
     <style>
@@ -29,1072 +29,439 @@
             --font-body: 'Space Grotesk', sans-serif;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         html.lenis, html.lenis body { height: auto; }
         .lenis.lenis-smooth { scroll-behavior: auto !important; }
         .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
         .lenis.lenis-stopped { overflow: hidden; }
-        .lenis.lenis-scrolling iframe { pointer-events: none; }
-
+        
         body {
-            font-family: var(--font-body);
-            background: var(--bg);
-            color: var(--fg);
-            font-size: 16px;
-            line-height: 1.5;
-            overflow-x: hidden;
-            cursor: none;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            font-family: var(--font-body); background: var(--bg); color: var(--fg);
+            font-size: 16px; line-height: 1.5; overflow-x: hidden; cursor: none;
+            -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
         }
-
         ::selection { background: var(--accent); color: var(--bg); }
 
-        /* Interactive Canvas Background */
-        #bgCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.6;
-        }
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; opacity: 0.6; }
 
-        /* Custom Cursor */
         @media (hover: hover) and (pointer: fine) {
             .cursor {
-                position: fixed;
-                width: 20px;
-                height: 20px;
-                border: 1px solid rgba(255,255,255,0.5);
-                border-radius: 50%;
-                pointer-events: none;
-                z-index: 9999;
-                mix-blend-mode: difference;
-                transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, border-color 0.3s ease;
-                transform: translate(-50%, -50%);
+                position: fixed; width: 20px; height: 20px; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%;
+                pointer-events: none; z-index: 9999; mix-blend-mode: difference;
+                transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, border-color 0.3s ease; transform: translate(-50%, -50%);
             }
-            .cursor.hover {
-                width: 70px;
-                height: 70px;
-                background: rgba(255, 255, 255, 0.1);
-                border-color: rgba(255,255,255,0.2);
-                backdrop-filter: blur(4px);
-                -webkit-backdrop-filter: blur(4px);
-            }
+            .cursor.hover { width: 70px; height: 70px; background: rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.2); backdrop-filter: blur(4px); }
             .cursor-dot {
-                position: fixed;
-                width: 4px;
-                height: 4px;
-                background: var(--accent);
-                border-radius: 50%;
-                pointer-events: none;
-                z-index: 9999;
-                mix-blend-mode: screen;
-                transform: translate(-50%, -50%);
-                box-shadow: 0 0 10px var(--accent);
+                position: fixed; width: 4px; height: 4px; background: var(--accent); border-radius: 50%;
+                pointer-events: none; z-index: 9999; mix-blend-mode: screen; transform: translate(-50%, -50%); box-shadow: 0 0 10px var(--accent);
             }
         }
+        @media (hover: none) { .cursor, .cursor-dot { display: none; } body { cursor: auto; } }
 
-        @media (hover: none) {
-            .cursor, .cursor-dot { display: none; }
-            body { cursor: auto; }
-        }
+        .noise { position: fixed; inset: 0; pointer-events: none; z-index: 9998; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 
-        .noise {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 9998;
-            opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-        }
-
-        /* Enhanced Loader */
-        .loader {
-            position: fixed;
-            inset: 0;
-            background: var(--bg);
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transform-origin: top;
-            will-change: transform;
-        }
-
+        .loader { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; transform-origin: top; }
         .loader-wrapper { display: flex; flex-direction: column; align-items: center; gap: 24px; }
         .loader-text-group { display: flex; align-items: baseline; gap: 16px; }
         .loader-text { font-size: 14px; letter-spacing: 0.3em; text-transform: uppercase; overflow: hidden; display: flex; }
         .loader-text span { display: inline-block; transform: translateY(100%); }
         .loader-percent { font-size: 32px; font-weight: 300; font-variant-numeric: tabular-nums; color: var(--accent); opacity: 0; }
-        
-        .loader-progress {
-            width: 240px; height: 1px; background: rgba(255,255,255,0.1); position: relative; overflow: hidden;
-        }
-        .loader-bar {
-            position: absolute; left: 0; top: 0; height: 100%; width: 0%;
-            background: linear-gradient(90deg, transparent, var(--accent), var(--fg));
-            box-shadow: 0 0 10px var(--accent);
-        }
+        .loader-progress { width: 240px; height: 1px; background: rgba(255,255,255,0.1); position: relative; overflow: hidden; }
+        .loader-bar { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: linear-gradient(90deg, transparent, var(--accent), var(--fg)); box-shadow: 0 0 10px var(--accent); }
 
-        /* Smart Header */
-        .header {
-            position: fixed; top: 0; left: 0; width: 100%; padding: 24px 48px; display: flex; align-items: center; justify-content: space-between;
-            z-index: 1000; mix-blend-mode: difference; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), padding 0.4s ease;
-        }
+        .header { position: fixed; top: 0; left: 0; width: 100%; padding: 24px 48px; display: flex; align-items: center; justify-content: space-between; z-index: 1000; mix-blend-mode: difference; transition: transform 0.4s ease, padding 0.4s ease; }
         .header.hidden { transform: translateY(-100%); }
         .header.scrolled { padding: 16px 48px; }
         .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none; color: var(--fg); }
-        
         .menu-btn-wrap { display: inline-block; padding: 12px; margin: -12px; }
-        .menu-btn {
-            background: none; border: none; color: var(--fg); font-size: 12px; font-weight: 500;
-            letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; padding: 12px 0;
-            position: relative; overflow: hidden; will-change: transform;
-        }
-        .menu-btn span { display: block; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .menu-btn { background: none; border: none; color: var(--fg); font-size: 12px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; padding: 12px 0; position: relative; overflow: hidden; }
+        .menu-btn span { display: block; transition: transform 0.4s ease; }
         .menu-btn span:last-child { position: absolute; top: 12px; left: 0; transform: translateY(100%); color: var(--accent); }
         .menu-btn-wrap:hover .menu-btn span:first-child { transform: translateY(-100%); }
         .menu-btn-wrap:hover .menu-btn span:last-child { transform: translateY(0); }
 
-        /* Fullscreen Menu */
-        .menu {
-            position: fixed; inset: 0; background: rgba(5, 5, 5, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            z-index: 2000; display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0;
-            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        .menu { position: fixed; inset: 0; background: rgba(5, 5, 5, 0.9); backdrop-filter: blur(20px); z-index: 2000; display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0; transition: opacity 0.5s ease; }
         .menu.active { pointer-events: all; opacity: 1; }
-        .menu-inner { text-align: center; perspective: 1000px; }
-        .menu-item {
-            display: block; font-size: clamp(32px, 6vw, 72px); font-weight: 700; color: var(--fg); text-decoration: none;
-            line-height: 1.3; letter-spacing: -0.02em; position: relative; overflow: hidden; margin: 8px 0;
-            transform-origin: center; will-change: transform;
-        }
-        .menu-item span {
-            display: inline-block; transform: translateY(110%) rotate(5deg); transition: color 0.3s ease, transform 0.3s ease; opacity: 0;
-        }
-        .menu.active .menu-item span { transform: translateY(0) rotate(0); opacity: 1; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease; }
-        .menu.active .menu-item:nth-child(1) span { transition-delay: 0.1s; }
-        .menu.active .menu-item:nth-child(2) span { transition-delay: 0.15s; }
-        .menu.active .menu-item:nth-child(3) span { transition-delay: 0.2s; }
-        .menu.active .menu-item:nth-child(4) span { transition-delay: 0.25s; }
-        .menu.active .menu-item:nth-child(5) span { transition-delay: 0.3s; }
+        .menu-inner { text-align: center; }
+        .menu-item { display: block; font-size: clamp(32px, 6vw, 72px); font-weight: 700; color: var(--fg); text-decoration: none; letter-spacing: -0.02em; overflow: hidden; margin: 8px 0; }
+        .menu-item span { display: inline-block; transform: translateY(110%) rotate(5deg); transition: color 0.3s ease, transform 0.3s ease; opacity: 0; }
+        .menu.active .menu-item span { transform: translateY(0) rotate(0); opacity: 1; transition: transform 0.8s ease, opacity 0.8s ease; }
         .menu-item:hover span { color: var(--accent); transform: scale(1.05); }
 
-        /* Sections */
-        section { padding: 0 48px; position: relative; z-index: 1; }
-        .section-inner { max-width: 1400px; margin: 0 auto; padding: 120px 0; }
-        .section-label { display: flex; align-items: center; gap: 24px; margin-bottom: 48px; }
-        .section-num { font-size: 14px; font-weight: 600; color: var(--muted); will-change: transform; }
-        .section-title { font-size: 12px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
-
-        /* Hero */
-        .hero { min-height: 100vh; display: flex; align-items: center; }
-        .hero-content { max-width: 1000px; position: relative; z-index: 1; }
+        /* HERO - Zoom Through Text Effect */
+        .hero { height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .hero-title-container { position: relative; z-index: 2; text-align: center; will-change: transform, scale; transform-origin: center center; }
+        .hero-title-massive { font-size: clamp(80px, 20vw, 300px); font-weight: 700; line-height: 0.85; letter-spacing: -0.04em; margin: 0; white-space: nowrap; user-select: none; color: var(--fg); mix-blend-mode: exclusion; }
+        .hero-subtitle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center; z-index: 1; opacity: 0; font-size: clamp(24px, 4vw, 48px); font-weight: 600; }
+        .hero-subtitle em { color: var(--accent); font-style: normal; }
         
-        .hero-title-container {
-            position: relative;
-            margin-bottom: 40px;
-            will-change: transform;
-            cursor: crosshair;
-        }
-        .hero-title-massive {
-            font-size: clamp(60px, 15vw, 250px);
-            font-weight: 700;
-            line-height: 0.85;
-            letter-spacing: -0.04em;
-            margin: 0;
-            white-space: nowrap;
-            user-select: none;
-        }
-        .hero-title-massive.outline {
-            color: transparent;
-            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
-            transition: -webkit-text-stroke 0.4s ease;
-        }
-        .hero-title-container:hover .hero-title-massive.outline {
-            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
-        }
-        .hero-title-massive.fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            color: var(--accent);
-            pointer-events: none;
-            clip-path: circle(0px at 50% 50%);
-            background: linear-gradient(135deg, var(--fg) 0%, var(--accent) 50%, #00aaff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 40px rgba(0, 255, 136, 0.4));
-        }
+        /* DATA STATS - Counting Numbers */
+        .stats-section { padding: 120px 48px; position: relative; z-index: 1; background: var(--bg); }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; max-width: 1400px; margin: 0 auto; border-top: 1px solid var(--border); padding-top: 80px; }
+        .stat-item { display: flex; flex-direction: column; gap: 16px; }
+        .stat-num-wrap { font-size: clamp(60px, 8vw, 120px); font-weight: 700; line-height: 1; color: var(--accent); display: flex; align-items: baseline; }
+        .stat-label { font-size: 16px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
 
-        .hero-subtitle {
-            font-size: 20px;
-            color: var(--muted);
-            max-width: 600px;
-            line-height: 1.6;
-            opacity: 0;
-            will-change: transform, opacity;
-        }
-        
-        .hero-scroll {
-            position: absolute; bottom: 48px; left: 48px; display: flex; align-items: center; gap: 12px;
-            font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); opacity: 0;
-        }
-        .scroll-line { width: 60px; height: 1px; background: rgba(255,255,255,0.1); position: relative; overflow: hidden; }
-        .scroll-line::after {
-            content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 30%; background: var(--accent);
-            animation: scrollLine 2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-        }
-        @keyframes scrollLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(400%); } }
+        /* HORIZONTAL SCROLL - Manychat Style */
+        .horizontal-section { overflow: hidden; position: relative; z-index: 1; background: var(--bg); }
+        .horizontal-container { display: flex; width: 400vw; height: 100vh; }
+        .horizontal-panel { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; padding: 0 48px; position: relative; }
+        .panel-content { width: 100%; max-width: 1200px; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+        .panel-num { font-size: 240px; font-weight: 700; color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.1); position: absolute; top: 10%; right: 10%; z-index: 0; pointer-events: none; }
+        .panel-text { z-index: 1; }
+        .panel-title { font-size: clamp(40px, 5vw, 64px); font-weight: 700; margin-bottom: 24px; line-height: 1.1; }
+        .panel-desc { font-size: 18px; color: var(--muted); max-width: 400px; }
+        .panel-img { width: 100%; height: 60vh; background: var(--card); border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 1; transform-origin: left; }
+        .panel-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(50%); transition: filter 0.5s ease; }
+        .panel-img:hover img { filter: grayscale(0%); }
 
-        /* Services - 3D Tilt Cards */
-        .services-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; border-top: 1px solid var(--border); padding-top: 48px; perspective: 1000px;
-        }
-        @media (hover: hover) { .services-grid:hover .service-item { opacity: 0.2; filter: grayscale(100%); } }
-        @media (max-width: 900px) { .services-grid { grid-template-columns: 1fr; } }
+        /* STICKY STACKED CARDS - Works Section */
+        .stacked-section { padding: 120px 0; background: var(--bg); position: relative; z-index: 1; }
+        .stacked-header { max-width: 1400px; margin: 0 auto; padding: 0 48px 80px; }
+        .stacked-cards-wrap { display: flex; flex-direction: column; align-items: center; padding-bottom: 20vh; }
+        .stack-card { position: sticky; top: 15vh; width: calc(100% - 96px); max-width: 1200px; height: 70vh; background: var(--card); border-radius: 32px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; display: flex; box-shadow: 0 -20px 40px rgba(0,0,0,0.5); transform-origin: top center; margin-bottom: 40px; }
+        .stack-card-img { flex: 1.5; background: #000; position: relative; overflow: hidden; }
+        .stack-card-img img, .stack-card-img video { width: 100%; height: 100%; object-fit: cover; }
+        .stack-card-content { flex: 1; padding: 64px; display: flex; flex-direction: column; justify-content: space-between; background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); }
+        .stack-cat { color: var(--accent); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; }
+        .stack-title { font-size: 48px; font-weight: 700; margin-top: 16px; }
 
-        .service-item {
-            padding: 32px; border-radius: 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
-            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
-            transform-style: preserve-3d; will-change: transform, opacity; position: relative; overflow: hidden;
-        }
-        .service-item::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(0,255,136,0.5), transparent);
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-        
-        .services-grid .service-item:hover {
-            opacity: 1; filter: grayscale(0%); box-shadow: 0 30px 60px rgba(0,0,0,0.4), 0 0 40px rgba(0,255,136,0.1);
-        }
-        .services-grid .service-item:hover::before { opacity: 1; }
-        
-        .service-num { font-size: 12px; color: var(--accent); margin-bottom: 24px; font-family: monospace; transform: translateZ(30px); }
-        .service-title { font-size: 32px; font-weight: 700; margin-bottom: 24px; letter-spacing: -0.02em; transform: translateZ(50px); }
-        .service-list { list-style: none; transform: translateZ(20px); }
-        .service-list li {
-            font-size: 15px; color: var(--muted); padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex; justify-content: space-between; transition: color 0.3s ease;
-        }
-        .service-list li:last-child { border-bottom: none; }
-        .service-item:hover .service-list li { color: rgba(255,255,255,0.8); }
-
-        /* WORKS Header + Filter */
-        .works-header { padding: 80px 48px 0; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 24px; will-change: transform; }
-        .works-filter { display: flex; gap: 8px; }
-        .filter-btn {
-            padding: 8px 24px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: var(--muted);
-            font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); border-radius: 100px;
-        }
-        .filter-btn:hover, .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 20px rgba(0,255,136,0.3); }
-
-        /* WORKS — Arc Card Carousel */
-        .works-container {
-            position: relative; height: 600px; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: default;
-            background: radial-gradient(circle at center, rgba(0, 255, 136, 0.04) 0%, transparent 60%); touch-action: pan-y;
-        }
-        .works-container::after {
-            content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 200;
-            background: linear-gradient(to top, var(--bg) 0%, transparent 15%), linear-gradient(to right, var(--bg) 0%, transparent 10%, transparent 90%, var(--bg) 100%), linear-gradient(to bottom, var(--bg) 0%, transparent 5%);
-        }
-        .arc-carousel { position: relative; width: 100%; max-width: 1100px; height: 100%; perspective: 1200px; margin: 0 auto; }
-        .arc-card {
-            position: absolute; width: 260px; height: 380px; left: 50%; top: 50%; border-radius: 20px; overflow: hidden; cursor: pointer;
-            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), z-index 0.6s, opacity 0.6s, filter 0.6s; transform-style: preserve-3d;
-            background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); will-change: transform, filter, opacity;
-        }
-        .arc-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%); }
-        .arc-card-img { width: 100%; height: 82%; overflow: hidden; border-radius: 18px 18px 0 0; background: #050505; }
-        .arc-card-img img, .arc-card-img video { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); filter: grayscale(40%); }
-        .arc-card.active .arc-card-img img, .arc-card.active .arc-card-img video { transform: scale(1.05); filter: grayscale(0%); }
-        .arc-card-info { padding: 14px 18px 4px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .arc-card-title { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
-        .arc-card-cat { font-size: 11px; color: var(--accent); letter-spacing: 0.05em; text-transform: uppercase; }
-
-        .arc-card.active {
-            width: 320px; height: 420px; z-index: 100 !important; background: rgba(20, 20, 20, 0.9);
-            border: 1px solid var(--accent); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 255, 136, 0.15); filter: blur(0px) !important;
-        }
-        .arc-hint { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); text-align: center; opacity: 0.4; transition: opacity 0.3s ease; pointer-events: none; font-family: monospace; font-size: 10px; }
-        .works-container:hover .arc-hint { opacity: 0; }
-
-        /* CARD DETAIL MODAL */
-        .card-modal {
-            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .card-modal.active { opacity: 1; visibility: visible; }
-        .card-modal-inner { max-width: 1000px; width: 90%; max-height: 90vh; display: flex; flex-direction: column; transform: scale(0.95) translateY(20px); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .card-modal.active .card-modal-inner { transform: scale(1) translateY(0); }
-        .card-modal-media { flex: 1; border-radius: 8px; overflow: hidden; background: #050505; min-height: 300px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
-        .card-modal-media img, .card-modal-media video { width: 100%; height: 100%; object-fit: contain; max-height: 70vh; }
-        .card-modal-info { padding: 24px 0; display: flex; justify-content: space-between; align-items: flex-start; }
-        .card-modal-title { font-size: 32px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.02em; }
-        .card-modal-cat { font-size: 12px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; }
-        .card-modal-close {
-            width: 56px; height: 56px; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; background: transparent;
-            color: var(--fg); font-size: 24px; cursor: pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .card-modal-close:hover { background: var(--fg); color: #000; transform: rotate(90deg); }
-
-        /* Trust / Marquee - Stroke alternating */
+        /* Trust / Marquee */
         .trust { overflow: hidden; padding: 100px 0; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); }
         .marquee { display: flex; gap: 64px; width: max-content; animation: marquee 35s linear infinite; }
-        .marquee:hover { animation-play-state: paused; }
-        .marquee-item {
-            font-size: clamp(40px, 6vw, 80px); font-weight: 700; white-space: nowrap; transition: all 0.3s ease; cursor: default;
-            text-transform: uppercase; letter-spacing: -0.02em;
-        }
-        /* Alternating filled and stroke text */
+        .marquee-item { font-size: clamp(40px, 6vw, 80px); font-weight: 700; white-space: nowrap; text-transform: uppercase; }
         .marquee-item:nth-child(odd) { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.3); }
         .marquee-item:nth-child(even) { color: var(--fg); }
-        
-        .marquee-item:hover { color: var(--accent); -webkit-text-stroke: 0px transparent; text-shadow: 0 0 30px rgba(0,255,136,0.4); transform: scale(1.05); }
-        .marquee-dot { color: var(--accent); font-size: 20px; align-self: center; }
-
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
         /* Contact */
-        .contact { min-height: 80vh; display: flex; align-items: center; }
-        .contact-title { font-size: clamp(40px, 8vw, 100px); font-weight: 700; line-height: 1.1; letter-spacing: -0.04em; margin-bottom: 48px; will-change: transform; }
+        .contact { min-height: 80vh; display: flex; align-items: center; padding: 0 48px; }
+        .contact-title { font-size: clamp(40px, 8vw, 100px); font-weight: 700; line-height: 1.1; letter-spacing: -0.04em; margin-bottom: 48px; }
         .contact-title em { font-style: normal; color: transparent; -webkit-text-stroke: 2px var(--accent); }
-
-        .contact-btn-wrap { display: inline-block; padding: 20px; margin: -20px; }
-        .contact-btn {
-            display: inline-flex; align-items: center; gap: 16px; padding: 24px 48px; background: transparent;
-            border: 1px solid rgba(255,255,255,0.2); border-radius: 100px; color: var(--fg); font-size: 18px; font-weight: 500;
-            text-decoration: none; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden; will-change: transform;
-        }
-        .contact-btn::before {
-            content: ''; position: absolute; inset: 0; background: var(--accent); border-radius: 100px;
-            transform: scale(0); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); z-index: 0;
-        }
-        .contact-btn-wrap:hover .contact-btn { border-color: var(--accent); box-shadow: 0 0 30px rgba(0,255,136,0.2); }
-        .contact-btn-wrap:hover .contact-btn::before { transform: scale(1.1); }
+        .contact-btn { display: inline-flex; align-items: center; gap: 16px; padding: 24px 48px; background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: 100px; color: var(--fg); font-size: 18px; text-decoration: none; position: relative; overflow: hidden; }
+        .contact-btn::before { content: ''; position: absolute; inset: 0; background: var(--accent); border-radius: 100px; transform: scale(0); transition: transform 0.5s ease; z-index: 0; }
+        .contact-btn:hover::before { transform: scale(1.1); }
         .contact-btn span, .contact-btn svg { position: relative; z-index: 1; transition: color 0.4s ease; }
-        .contact-btn-wrap:hover .contact-btn span, .contact-btn-wrap:hover .contact-btn svg { color: #000; }
+        .contact-btn:hover span, .contact-btn:hover svg { color: #000; }
 
-        /* Footer */
-        .footer { padding: 32px 48px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .footer-inner { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        .footer-copy { font-size: 13px; color: var(--muted); font-family: monospace; }
-        .footer-links { display: flex; gap: 32px; }
-        .footer-links a { font-size: 13px; color: var(--muted); text-decoration: none; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s ease; }
-        .footer-links a:hover { color: var(--accent); }
-
-        .scroll-progress {
-            position: fixed; top: 0; left: 0; height: 3px; background: var(--accent);
-            z-index: 9999; transform-origin: left; transform: scaleX(0); pointer-events: none; box-shadow: 0 0 10px var(--accent);
-        }
+        .footer { padding: 32px 48px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; }
+        .scroll-progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 9999; transform-origin: left; transform: scaleX(0); }
 
         @media (max-width: 768px) {
-            .header { padding: 20px 24px; }
-            .header.scrolled { padding: 12px 24px; }
-            section { padding: 0 24px; }
-            .section-inner { padding: 80px 0; }
-            .hero-scroll { left: 24px; bottom: 24px; }
-            .footer { padding: 24px; }
-            .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
-            .services-grid { padding-top: 24px; }
+            .horizontal-container { width: auto; height: auto; flex-direction: column; }
+            .horizontal-panel { width: 100%; height: auto; padding: 80px 24px; }
+            .panel-content { grid-template-columns: 1fr; gap: 32px; }
+            .stack-card { height: auto; flex-direction: column; }
+            .stack-card-img { height: 300px; flex: none; }
+            .stack-card-content { padding: 32px; }
+            .stats-grid { grid-template-columns: 1fr; gap: 32px; padding-top: 40px; }
         }
     </style>
 </head>
 <body>
-    <!-- Interactive Background -->
     <canvas id="bgCanvas"></canvas>
-
-    <div class="cursor"></div>
-    <div class="cursor-dot"></div>
-    <div class="noise"></div>
+    <div class="cursor"></div><div class="cursor-dot"></div><div class="noise"></div>
     <div class="scroll-progress"></div>
 
     <div class="loader">
         <div class="loader-wrapper">
             <div class="loader-text-group">
-                <div class="loader-text">
-                    <span>I</span><span>N</span><span>I</span><span>T</span><span>I</span><span>A</span><span>T</span><span>I</span><span>N</span><span>G</span>
-                </div>
+                <div class="loader-text"><span>I</span><span>N</span><span>I</span><span>T</span><span>I</span><span>A</span><span>T</span><span>I</span><span>N</span><span>G</span></div>
                 <div class="loader-percent">0%</div>
             </div>
-            <div class="loader-progress">
-                <div class="loader-bar"></div>
-            </div>
+            <div class="loader-progress"><div class="loader-bar"></div></div>
         </div>
     </div>
 
     <header class="header" id="siteHeader">
         <a href="#" class="logo">AGENCY_</a>
         <div class="menu-btn-wrap" data-magnetic>
-            <button class="menu-btn">
-                <span>Menu</span>
-                <span>Close</span>
-            </button>
+            <button class="menu-btn"><span>Menu</span><span>Close</span></button>
         </div>
     </header>
 
     <nav class="menu">
         <div class="menu-inner">
             <a href="#about" class="menu-item" data-magnetic><span>About</span></a>
-            <a href="#services" class="menu-item" data-magnetic><span>Services</span></a>
+            <a href="#data" class="menu-item" data-magnetic><span>Data</span></a>
+            <a href="#capabilities" class="menu-item" data-magnetic><span>Capabilities</span></a>
             <a href="#works" class="menu-item" data-magnetic><span>Works</span></a>
-            <a href="#trust" class="menu-item" data-magnetic><span>Clients</span></a>
             <a href="#contact" class="menu-item" data-magnetic><span>Contact</span></a>
         </div>
     </nav>
 
+    <!-- EFFECT 1: Scroll Zoom Intro -->
     <section class="hero" id="about">
-        <div class="section-inner">
-            <div class="section-label">
-                <span class="section-num" data-speed="0.8">01.</span>
-                <span class="section-title">About Us</span>
+        <div class="hero-title-container">
+            <h1 class="hero-title-massive">PORTFOLIO</h1>
+        </div>
+        <div class="hero-subtitle">
+            Beyond limitations.<br><em>Welcome to the new era.</em>
+        </div>
+    </section>
+
+    <!-- EFFECT 2: Data Counters -->
+    <section class="stats-section" id="data">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-num-wrap"><span class="stat-num" data-target="98">0</span>%</div>
+                <div class="stat-label">Client Retention</div>
             </div>
-            <div class="hero-content">
-                <div class="hero-title-container" data-speed="0.95">
-                    <h1 class="hero-title-massive outline">PORTFOLIO</h1>
-                    <h1 class="hero-title-massive fill" aria-hidden="true">PORTFOLIO</h1>
-                </div>
-                <div class="hero-subtitle" data-speed="1.1">
-                    <span class="scramble-target" data-text="Driven by curiosity, not formula.">Driven by curiosity, not formula.</span>
-                    <br>
-                    <span class="scramble-target" data-text="We explore where creativity and technology collide.">We explore where creativity and technology collide.</span>
-                </div>
+            <div class="stat-item">
+                <div class="stat-num-wrap"><span class="stat-num" data-target="250">0</span>+</div>
+                <div class="stat-label">Global Projects</div>
             </div>
-            <div class="hero-scroll">
-                <div class="scroll-line"></div>
-                <span>Scroll to explore</span>
+            <div class="stat-item">
+                <div class="stat-num-wrap"><span class="stat-num" data-target="15">0</span>M</div>
+                <div class="stat-label">Users Reached</div>
             </div>
         </div>
     </section>
 
-    <section id="services">
-        <div class="section-inner">
-            <div class="section-label">
-                <span class="section-num" data-speed="0.8">02.</span>
-                <span class="section-title">Capabilities</span>
+    <!-- EFFECT 3: Horizontal Scroll (Manychat Report Style) -->
+    <section class="horizontal-section" id="capabilities">
+        <div class="horizontal-container">
+            <div class="horizontal-panel">
+                <div class="panel-num">01</div>
+                <div class="panel-content">
+                    <div class="panel-text">
+                        <h2 class="panel-title">Art<br>Direction.</h2>
+                        <p class="panel-desc">Defining the visual language of tomorrow. We craft cohesive brand experiences that resonate across all touchpoints.</p>
+                    </div>
+                    <div class="panel-img">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" alt="Art Direction">
+                    </div>
+                </div>
             </div>
-            <div class="services-grid">
-                <div class="service-item">
-                    <div class="service-num">001</div>
-                    <h3 class="service-title">Direction</h3>
-                    <ul class="service-list">
-                        <li>Art Direction</li>
-                        <li>Design Concept</li>
-                        <li>Commercials & CGI</li>
-                        <li>Brand Identity</li>
-                    </ul>
+            <div class="horizontal-panel">
+                <div class="panel-num">02</div>
+                <div class="panel-content">
+                    <div class="panel-text">
+                        <h2 class="panel-title">Digital<br>Experience.</h2>
+                        <p class="panel-desc">Interactive physics, WebGL, and seamless animations. Building the next generation of web interfaces.</p>
+                    </div>
+                    <div class="panel-img">
+                        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" alt="Digital Experience">
+                    </div>
                 </div>
-                <div class="service-item">
-                    <div class="service-num">002</div>
-                    <h3 class="service-title">Digital</h3>
-                    <ul class="service-list">
-                        <li>Web Experience</li>
-                        <li>Social Media</li>
-                        <li>Asset Production</li>
-                        <li>Motion Design</li>
-                    </ul>
-                </div>
-                <div class="service-item">
-                    <div class="service-num">003</div>
-                    <h3 class="service-title">Offline</h3>
-                    <ul class="service-list">
-                        <li>Immersive Event</li>
-                        <li>Interactive Art</li>
-                        <li>OOH/Billboard</li>
-                        <li>Print & Editorial</li>
-                    </ul>
+            </div>
+            <div class="horizontal-panel">
+                <div class="panel-num">03</div>
+                <div class="panel-content">
+                    <div class="panel-text">
+                        <h2 class="panel-title">Motion<br>& 3D.</h2>
+                        <p class="panel-desc">Breathing life into static pixels. High-end CGI, simulations, and cinematic motion graphics.</p>
+                    </div>
+                    <div class="panel-img">
+                        <img src="https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=1000&auto=format&fit=crop" alt="Motion & 3D">
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="works">
-        <div class="works-header" data-speed="0.9">
-            <div class="section-label">
-                <span class="section-num">03.</span>
-                <span class="section-title">Selected Works</span>
-            </div>
-            <div class="works-filter">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="image">Images</button>
-                <button class="filter-btn" data-filter="video">Videos</button>
-            </div>
+    <!-- EFFECT 4: Sticky Stacked Cards -->
+    <section class="stacked-section" id="works">
+        <div class="stacked-header">
+            <h2 style="font-size: 12px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);">Selected Works</h2>
         </div>
-        <div class="works-container" id="worksContainer" data-lenis-prevent>
-            <div class="arc-carousel" id="arcCarousel"></div>
-            <div class="arc-hint">
-                <span>[ Scroll / Swipe to navigate · Click to view ]</span>
+        <div class="stacked-cards-wrap" id="dynamicWorks">
+            <!-- Rendered via JS -->
+            <div class="stack-card">
+                <div class="stack-card-img"><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80" alt="Placeholder"></div>
+                <div class="stack-card-content">
+                    <div class="stack-cat">Loading...</div>
+                    <h3 class="stack-title">Initializing Works</h3>
+                </div>
             </div>
         </div>
     </section>
 
-    <div class="card-modal" id="cardModal">
-        <div class="card-modal-inner">
-            <div class="card-modal-info">
-                <div>
-                    <div class="card-modal-title" id="modalTitle"></div>
-                    <div class="card-modal-cat" id="modalCat"></div>
-                </div>
-                <button class="card-modal-close" id="modalClose">✕</button>
-            </div>
-            <div class="card-modal-media" id="modalMedia"></div>
-        </div>
-    </div>
-
-    <section id="trust">
-        <div class="section-inner">
-            <div class="section-label">
-                <span class="section-num" data-speed="0.8">04.</span>
-                <span class="section-title">Partners</span>
-            </div>
-        </div>
-        <div class="trust">
-            <div class="marquee">
-                <!-- Group 1 -->
-                <span class="marquee-item">Louis Vuitton</span><span class="marquee-dot">✦</span>
-                <span class="marquee-item">Chanel</span><span class="marquee-dot">✦</span>
-                <span class="marquee-item">Dior</span><span class="marquee-dot">✦</span>
-                <span class="marquee-item">OnePlus</span><span class="marquee-dot">✦</span>
-                <span class="marquee-item">L'Oreal</span><span class="marquee-dot">✦</span>
-                <span class="marquee-item">The North Face</span><span class="marquee-dot">✦</span>
-                <span class="marquee-item">Oppo</span><span class="marquee-dot">✦</span>
-                <span class="marquee-item">Glossier</span><span class="marquee-dot">✦</span>
-                <!-- Group 2 -->
-                <span class="marquee-item">Louis Vuitton</span><span class="marquee-dot">✦</span>
-                <span class="marquee-item">Chanel</span><span class="marquee-dot">✦</span>
-                <span class="marquee-item">Dior</span><span class="marquee-dot">✦</span>
-                <span class="marquee-item">OnePlus</span><span class="marquee-dot">✦</span>
-                <span class="marquee-item">L'Oreal</span><span class="marquee-dot">✦</span>
-                <span class="marquee-item">The North Face</span><span class="marquee-dot">✦</span>
-                <span class="marquee-item">Oppo</span><span class="marquee-dot">✦</span>
-                <span class="marquee-item">Glossier</span><span class="marquee-dot">✦</span>
-            </div>
+    <section class="trust">
+        <div class="marquee">
+            <span class="marquee-item">Innovate</span><span class="marquee-dot">✦</span>
+            <span class="marquee-item">Disrupt</span><span class="marquee-dot">✦</span>
+            <span class="marquee-item">Create</span><span class="marquee-dot">✦</span>
+            <span class="marquee-item">Inspire</span><span class="marquee-dot">✦</span>
+            <span class="marquee-item">Innovate</span><span class="marquee-dot">✦</span>
+            <span class="marquee-item">Disrupt</span><span class="marquee-dot">✦</span>
+            <span class="marquee-item">Create</span><span class="marquee-dot">✦</span>
+            <span class="marquee-item">Inspire</span><span class="marquee-dot">✦</span>
         </div>
     </section>
 
     <section class="contact" id="contact">
-        <div class="section-inner">
-            <div class="section-label">
-                <span class="section-num" data-speed="0.8">05.</span>
-                <span class="section-title">Initiate</span>
-            </div>
-            <h2 class="contact-title" data-speed="0.95">
-                <span class="scramble-target" data-text="Let's create">Let's create</span><br>
-                <span class="scramble-target" data-text="something">something</span> <em>extraordinary</em>
-            </h2>
+        <div style="max-width: 1400px; margin: 0 auto; width: 100%;">
+            <div style="font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 48px;">05. Initiate</div>
+            <h2 class="contact-title">Let's create<br>something <em>extraordinary</em></h2>
             <div class="contact-btn-wrap" data-magnetic>
                 <a href="mailto:hello@portfolio.com" class="contact-btn">
                     <span>hello@portfolio.com</span>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
             </div>
         </div>
     </section>
 
     <footer class="footer">
-        <div class="footer-inner">
-            <div class="footer-copy">© 2026 AGENCY_. ALL RIGHTS RESERVED.</div>
-            <div class="footer-links">
-                <a href="#">Instagram</a>
-                <a href="#">Behance</a>
-                <a href="#">X / Twitter</a>
-            </div>
-        </div>
+        <div style="font-size: 13px; color: var(--muted); font-family: monospace;">© 2026 AGENCY_. ALL RIGHTS RESERVED.</div>
+        <div style="display: flex; gap: 32px;"><a href="#" style="color:var(--muted); text-decoration:none;">IG</a><a href="#" style="color:var(--muted); text-decoration:none;">X</a></div>
     </footer>
 
     <script>
-        // Init Lenis Smooth Scroll
-        const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            direction: 'vertical', gestureDirection: 'vertical',
-            smooth: true, smoothTouch: false, touchMultiplier: 2,
-        });
-
-        function raf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
+        // Init Lenis
+        const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
-
         gsap.registerPlugin(ScrollTrigger);
         lenis.on('scroll', ScrollTrigger.update);
         gsap.ticker.add((time)=>{ lenis.raf(time * 1000) });
         gsap.ticker.lagSmoothing(0, 0);
 
-        // State & DOM
-        let works = [];
-        const loader = document.querySelector('.loader');
-        const loaderBar = document.querySelector('.loader-bar');
-        const loaderPercent = document.querySelector('.loader-percent');
-        const menu = document.querySelector('.menu');
-        const menuBtnWrap = document.querySelector('.menu-btn-wrap');
-        const header = document.getElementById('siteHeader');
-        const cursor = document.querySelector('.cursor');
-        const cursorDot = document.querySelector('.cursor-dot');
-        const scrollProgress = document.querySelector('.scroll-progress');
-
-        // Smart Header
-        let lastScrollY = window.scrollY;
-        lenis.on('scroll', (e) => {
-            const currentScrollY = e.animatedScroll;
-            if (currentScrollY > 50) {
-                header.classList.add('scrolled');
-                if (currentScrollY > lastScrollY && currentScrollY > 200 && !menu.classList.contains('active')) {
-                    header.classList.add('hidden');
-                } else { header.classList.remove('hidden'); }
-            } else { header.classList.remove('scrolled', 'hidden'); }
-            lastScrollY = currentScrollY;
-        });
-
-        // Global Mouse Position
+        // UI States
         let mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
-        document.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX; mouse.y = e.clientY;
-        });
+        document.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
 
-        // Interactive Canvas Trail Background
-        const canvas = document.getElementById('bgCanvas');
-        const ctx = canvas.getContext('2d', { alpha: false });
-        let width, height;
-        let particles = [];
-
-        function resizeCanvas() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            ctx.fillStyle = '#050505'; // Match --bg
-            ctx.fillRect(0, 0, width, height);
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
+        // Canvas BG
+        const canvas = document.getElementById('bgCanvas'); const ctx = canvas.getContext('2d');
+        let width, height, particles = [];
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; ctx.fillStyle='#050505'; ctx.fillRect(0,0,width,height); }
+        window.addEventListener('resize', resize); resize();
         class Particle {
-            constructor(x, y) {
-                this.x = x; this.y = y;
-                this.size = Math.random() * 2 + 1;
-                this.speedX = Math.random() * 2 - 1;
-                this.speedY = Math.random() * 2 - 1;
-                this.life = 1;
-                this.decay = Math.random() * 0.02 + 0.01;
-            }
-            update() {
-                this.x += this.speedX; this.y += this.speedY;
-                this.life -= this.decay;
-            }
-            draw() {
-                ctx.globalAlpha = this.life;
-                ctx.fillStyle = '#00ff88';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+            constructor(x,y) { this.x=x; this.y=y; this.size=Math.random()*2+1; this.sx=Math.random()*2-1; this.sy=Math.random()*2-1; this.life=1; }
+            update() { this.x+=this.sx; this.y+=this.sy; this.life-=0.02; }
+            draw() { ctx.globalAlpha=this.life; ctx.fillStyle='#00ff88'; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); }
         }
-
         function animateCanvas() {
-            // Fade effect for trails
-            ctx.globalAlpha = 0.1;
-            ctx.fillStyle = '#050505';
-            ctx.fillRect(0, 0, width, height);
-            ctx.globalAlpha = 1;
-
-            // Add new particles at mouse pos occasionally to save perf
-            if(Math.random() > 0.5) {
-                particles.push(new Particle(mouse.x, mouse.y));
-            }
-
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-                particles[i].draw();
-                if (particles[i].life <= 0) {
-                    particles.splice(i, 1);
-                    i--;
-                }
-            }
+            ctx.globalAlpha=0.1; ctx.fillStyle='#050505'; ctx.fillRect(0,0,width,height); ctx.globalAlpha=1;
+            if(Math.random()>0.5) particles.push(new Particle(mouse.x, mouse.y));
+            particles.forEach((p,i) => { p.update(); p.draw(); if(p.life<=0) particles.splice(i,1); });
             requestAnimationFrame(animateCanvas);
         }
         animateCanvas();
 
-        // Cursor Physics
-        if (cursor && cursorDot) {
-            let pos = { x: window.innerWidth/2, y: window.innerHeight/2 };
-            let dotPos = { x: window.innerWidth/2, y: window.innerHeight/2 };
-            const speed = 0.15;
-
-            function animateCursor() {
-                pos.x += (mouse.x - pos.x) * speed; pos.y += (mouse.y - pos.y) * speed;
-                dotPos.x += (mouse.x - dotPos.x) * 0.5; dotPos.y += (mouse.y - dotPos.y) * 0.5;
-                
-                cursor.style.left = pos.x + 'px'; cursor.style.top = pos.y + 'px';
-                cursorDot.style.left = dotPos.x + 'px'; cursorDot.style.top = dotPos.y + 'px';
-                requestAnimationFrame(animateCursor);
+        // Cursor & Nav
+        const cursor = document.querySelector('.cursor'), cursorDot = document.querySelector('.cursor-dot');
+        if(cursor) {
+            let pos = {x:width/2, y:height/2}, dotPos = {x:width/2, y:height/2};
+            function renderCursor() {
+                pos.x+=(mouse.x-pos.x)*0.15; pos.y+=(mouse.y-pos.y)*0.15; dotPos.x+=(mouse.x-dotPos.x)*0.5; dotPos.y+=(mouse.y-dotPos.y)*0.5;
+                cursor.style.transform=`translate(calc(-50% + ${pos.x}px), calc(-50% + ${pos.y}px))`;
+                cursorDot.style.transform=`translate(calc(-50% + ${dotPos.x}px), calc(-50% + ${dotPos.y}px))`;
+                requestAnimationFrame(renderCursor);
             }
-            animateCursor();
-
-            const hoverTargets = document.querySelectorAll('a, button, .filter-btn, .arc-card, .menu-item, .hero-title-container');
-            hoverTargets.forEach(el => {
-                el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-                el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-            });
+            renderCursor();
         }
 
-        // Hero Portfolio Title Spotlight Effect
-        const titleContainer = document.querySelector('.hero-title-container');
-        const titleFill = document.querySelector('.hero-title-massive.fill');
-        
-        if (titleContainer && titleFill) {
-            titleContainer.addEventListener('mousemove', (e) => {
-                const rect = titleContainer.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                gsap.to(titleFill, {
-                    clipPath: `circle(180px at ${x}px ${y}px)`,
-                    duration: 0.4,
-                    ease: "power2.out"
-                });
-            });
-            
-            titleContainer.addEventListener('mouseleave', () => {
-                gsap.to(titleFill, {
-                    clipPath: `circle(0px at 50% 50%)`,
-                    duration: 0.6,
-                    ease: "power2.out"
-                });
-            });
-        }
+        const menuBtnWrap = document.querySelector('.menu-btn-wrap'), menu = document.querySelector('.menu');
+        menuBtnWrap.addEventListener('click', () => { menu.classList.toggle('active'); menu.classList.contains('active') ? lenis.stop() : lenis.start(); });
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', (e) => { e.preventDefault(); menu.classList.remove('active'); lenis.start(); lenis.scrollTo(item.getAttribute('href'), {offset: -50}); });
+        });
 
-        // Magnetic Buttons & 3D Cards Logic
-        const magneticElements = document.querySelectorAll('[data-magnetic]');
-        magneticElements.forEach(elem => {
-            const target = elem.children[0];
+        // Magnetics
+        document.querySelectorAll('[data-magnetic]').forEach(elem => {
             elem.addEventListener('mousemove', (e) => {
                 const rect = elem.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                gsap.to(target, { x: x * 0.4, y: y * 0.4, duration: 0.6, ease: "power3.out" });
+                gsap.to(elem.children[0], { x:(e.clientX-rect.left-rect.width/2)*0.4, y:(e.clientY-rect.top-rect.height/2)*0.4, duration:0.6 });
             });
-            elem.addEventListener('mouseleave', () => {
-                gsap.to(target, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.3)" });
-            });
+            elem.addEventListener('mouseleave', () => gsap.to(elem.children[0], { x:0, y:0, duration:0.6, ease:"elastic.out(1,0.3)" }));
         });
 
-        // 3D Tilt for Service Cards
-        document.querySelectorAll('.service-item').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = ((y - centerY) / centerY) * -10; // Max 10 deg
-                const rotateY = ((x - centerX) / centerX) * 10;
-                
-                gsap.to(card, {
-                    rotationX: rotateX,
-                    rotationY: rotateY,
-                    transformPerspective: 1000,
-                    ease: "power2.out",
-                    duration: 0.5
-                });
-            });
-            card.addEventListener('mouseleave', () => {
-                gsap.to(card, { rotationX: 0, rotationY: 0, ease: "elastic.out(1, 0.3)", duration: 1.2 });
-            });
-        });
-
-        // Scramble Text Effect Logic
-        class TextScramble {
-            constructor(el) {
-                this.el = el;
-                this.chars = '!<>-_\\/[]{}—=+*^?#________';
-                this.update = this.update.bind(this);
-            }
-            setText(newText) {
-                const oldText = this.el.innerText;
-                const length = Math.max(oldText.length, newText.length);
-                const promise = new Promise((resolve) => this.resolve = resolve);
-                this.queue = [];
-                for (let i = 0; i < length; i++) {
-                    const from = oldText[i] || '';
-                    const to = newText[i] || '';
-                    const start = Math.floor(Math.random() * 40);
-                    const end = start + Math.floor(Math.random() * 40);
-                    this.queue.push({ from, to, start, end });
-                }
-                cancelAnimationFrame(this.frameRequest);
-                this.frame = 0;
-                this.update();
-                return promise;
-            }
-            update() {
-                let output = '';
-                let complete = 0;
-                for (let i = 0, n = this.queue.length; i < n; i++) {
-                    let { from, to, start, end, char } = this.queue[i];
-                    if (this.frame >= end) {
-                        complete++;
-                        output += to;
-                    } else if (this.frame >= start) {
-                        if (!char || Math.random() < 0.28) {
-                            char = this.randomChar();
-                            this.queue[i].char = char;
-                        }
-                        output += `<span style="color:var(--accent);opacity:0.8">${char}</span>`;
-                    } else {
-                        output += from;
-                    }
-                }
-                this.el.innerHTML = output;
-                if (complete === this.queue.length) {
-                    this.resolve();
-                } else {
-                    this.frameRequest = requestAnimationFrame(this.update);
-                    this.frame++;
-                }
-            }
-            randomChar() {
-                return this.chars[Math.floor(Math.random() * this.chars.length)];
-            }
-        }
-
-        // Trigger Scramble on Elements
-        function triggerScramble(targets) {
-            targets.forEach(el => {
-                const fx = new TextScramble(el);
-                const text = el.getAttribute('data-text');
-                fx.setText(text);
-            });
-        }
-
-        // Loader
+        // Loader & Init Core Animations
         function initLoader() {
             lenis.stop();
             const tl = gsap.timeline();
-            tl.to('.loader-text span', { y: 0, duration: 0.5, stagger: 0.05, ease: 'power2.out' })
-              .to(loaderPercent, { opacity: 1, duration: 0.3 }, "-=0.2");
-
-            let progress = 0; const progressObj = { value: 0 };
-            
-            const interval = setInterval(() => {
-                progress += Math.random() * 15 + 5;
-                if (progress >= 100) progress = 100;
-                
-                gsap.to(progressObj, {
-                    value: progress, duration: 0.2,
-                    onUpdate: () => {
-                        loaderPercent.textContent = Math.round(progressObj.value) + '%';
-                        loaderBar.style.width = progressObj.value + '%';
-                    }
-                });
-
-                if (progress === 100) {
-                    clearInterval(interval);
-                    gsap.to(loader, {
-                        yPercent: -100, duration: 0.8, delay: 0.4, ease: 'power4.inOut',
-                        onComplete: () => {
-                            loader.style.display = 'none';
-                            lenis.start();
-                            initAnimations();
-                        }
-                    });
-                }
-            }, 120);
+            tl.to('.loader-text span', { y: 0, duration: 0.5, stagger: 0.05, ease: 'power2.out' }).to('.loader-percent', { opacity: 1, duration: 0.3 }, "-=0.2");
+            let p = { val: 0 };
+            gsap.to(p, { val: 100, duration: 2.5, ease: "power2.inOut", onUpdate: () => {
+                document.querySelector('.loader-percent').textContent = Math.round(p.val) + '%';
+                document.querySelector('.loader-bar').style.width = p.val + '%';
+            }, onComplete: () => {
+                gsap.to('.loader', { yPercent: -100, duration: 0.8, ease: 'power4.inOut', onComplete: () => { document.querySelector('.loader').style.display = 'none'; lenis.start(); setupScrollAnimations(); }});
+            }});
         }
 
-        // Reveal Animations
-        function initAnimations() {
-            // Hero Title Entrance
-            gsap.from('.hero-title-container', { y: 100, opacity: 0, duration: 1.5, ease: "expo.out", delay: 0.1 });
-            
-            // Subtitle Entrance & Scramble
-            gsap.to('.hero-subtitle', { y: 0, opacity: 1, duration: 1.2, ease: "power2.out", delay: 0.4 });
-            triggerScramble(document.querySelectorAll('.hero-subtitle .scramble-target'));
+        function setupScrollAnimations() {
+            // Global Progress
+            gsap.to('.scroll-progress', { scaleX: 1, ease: 'none', scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: true }});
 
-            gsap.to('.hero-scroll', { opacity: 1, duration: 1, delay: 1.2 });
+            // 1. Hero Zoom Scrub
+            const heroTl = gsap.timeline({ scrollTrigger: { trigger: ".hero", start: "top top", end: "+=150%", pin: true, scrub: 1 } });
+            heroTl.to(".hero-title-massive", { scale: 80, opacity: 0, ease: "power2.in" })
+                  .to(".hero-subtitle", { opacity: 1, scale: 1.2, ease: "power2.out" }, "-=0.4");
 
-            gsap.to(scrollProgress, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: true }});
+            // 2. Data Counters
+            gsap.utils.toArray('.stat-num').forEach(stat => {
+                gsap.to(stat, {
+                    innerHTML: stat.getAttribute('data-target'),
+                    duration: 2, snap: { innerHTML: 1 }, ease: "power3.out",
+                    scrollTrigger: { trigger: ".stats-section", start: "top 75%" }
+                });
+            });
 
-            gsap.utils.toArray('[data-speed]').forEach(el => {
-                const speed = parseFloat(el.getAttribute('data-speed'));
-                gsap.to(el, {
-                    y: (i, target) => -ScrollTrigger.maxScroll(window) * (1 - speed),
+            // 3. Horizontal Scroll
+            if(window.innerWidth > 768) {
+                let panels = gsap.utils.toArray(".horizontal-panel");
+                gsap.to(panels, {
+                    xPercent: -100 * (panels.length - 1),
                     ease: "none",
-                    scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 0, invalidateOnRefresh: true }
+                    scrollTrigger: {
+                        trigger: ".horizontal-section",
+                        pin: true,
+                        scrub: 1,
+                        end: () => "+=" + document.querySelector(".horizontal-container").offsetWidth
+                    }
+                });
+            }
+
+            // Fallback Init Stacked Cards (will re-trigger after data load)
+            initStackedCards();
+        }
+
+        // 4. Sticky Stacked Cards Setup
+        function initStackedCards() {
+            const cards = gsap.utils.toArray('.stack-card');
+            cards.forEach((card, i) => {
+                gsap.to(card, {
+                    scale: 1 - (cards.length - i) * 0.05,
+                    opacity: 0.5,
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 15vh",
+                        end: "bottom top",
+                        endTrigger: ".stacked-cards-wrap",
+                        scrub: true,
+                        invalidateOnRefresh: true
+                    }
                 });
             });
-
-            gsap.utils.toArray('section:not(.hero)').forEach(section => {
-                const label = section.querySelector('.section-label');
-                if (label) {
-                    gsap.from(label, { y: 40, opacity: 0, duration: 1, ease: 'power2.out', scrollTrigger: { trigger: section, start: 'top 80%', toggleActions: 'play none none reverse' }});
-                }
-            });
-
-            gsap.utils.toArray('.service-item').forEach((item) => {
-                gsap.from(item, { y: 60, opacity: 0, duration: 1, ease: 'power2.out', scrollTrigger: { trigger: item, start: 'top 85%', toggleActions: 'play none none reverse' }});
-            });
-
-            // Contact Scramble trigger on scroll
-            ScrollTrigger.create({
-                trigger: '.contact',
-                start: 'top 70%',
-                onEnter: () => triggerScramble(document.querySelectorAll('.contact-title .scramble-target'))
-            });
-            
-            gsap.from('.contact-title', { y: 80, opacity: 0, duration: 1.2, ease: 'power2.out', scrollTrigger: { trigger: '.contact', start: 'top 70%', toggleActions: 'play none none reverse' }});
         }
 
-        // Menu
-        menuBtnWrap.addEventListener('click', () => {
-            menu.classList.toggle('active');
-            menu.classList.contains('active') ? lenis.stop() : lenis.start();
-        });
-        document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetId = item.getAttribute('href');
-                menu.classList.remove('active');
-                lenis.start();
-                lenis.scrollTo(targetId, { duration: 1.5, offset: -50 });
-            });
-        });
-
-        // Works Carousel
-        const arcCarousel = document.getElementById('arcCarousel');
-        const worksContainer = document.getElementById('worksContainer');
-        const cardModal = document.getElementById('cardModal');
-        const modalMedia = document.getElementById('modalMedia');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalCat = document.getElementById('modalCat');
-        const modalClose = document.getElementById('modalClose');
-
-        let arcWorks = []; let currentIndex = 0; let isHovering = false; let scrollLocked = false;
-
-        function renderArcCards(items) {
-            if (!arcCarousel) return;
-            if (items.length === 0) { arcCarousel.innerHTML = '<p style="color:var(--muted);padding:40px;text-align:center;width:100%">No works yet</p>'; return; }
-            arcWorks = items; currentIndex = 0;
-            
-            arcCarousel.innerHTML = items.map((work, i) => `
-                <div class="arc-card" data-index="${i}">
-                    <div class="arc-card-img">
-                        ${work.type === 'video' ? `<video src="${work.url}" muted loop playsinline></video>` : `<img src="${work.url}" alt="${work.title}" loading="lazy">`}
-                    </div>
-                    <div class="arc-card-info">
-                        <div>
-                            <div class="arc-card-title">${work.title}</div>
-                            <div class="arc-card-cat">${work.category || ''}</div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            
-            arcCarousel.querySelectorAll('.arc-card').forEach((card, i) => {
-                const video = card.querySelector('video');
-                if (video) { card.addEventListener('mouseenter', () => video.play()); card.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; }); }
-                card.addEventListener('click', () => openModal(items[i]));
-            });
-            updateArcPositions();
-        }
-
-        function updateArcPositions() {
-            const cards = arcCarousel.querySelectorAll('.arc-card'); const total = cards.length;
-            cards.forEach((card, i) => {
-                let diff = i - currentIndex;
-                if (diff > total / 2) diff -= total; if (diff < -total / 2) diff += total;
-                const absDiff = Math.abs(diff);
-                card.style.display = 'block'; card.classList.toggle('active', diff === 0);
-                const rotate = diff * 12; const translateX = diff * 180; const translateY = absDiff * 30; const zIndex = 100 - absDiff;
-                let blurValue = Math.min(absDiff * 2, 8); let opacity = Math.max(1 - absDiff * 0.2, 0.3); let scale = Math.max(1 - absDiff * 0.08, 0.6);
-                
-                card.style.transform = `translate(-50%, -50%) translateX(${translateX}px) translateY(${translateY}px) rotate(${rotate}deg) scale(${scale})`;
-                card.style.zIndex = zIndex; card.style.opacity = opacity; card.style.filter = `blur(${blurValue}px)`;
-            });
-        }
-
-        function navigateArc(direction) {
-            const total = arcWorks.length; if (total <= 1) return;
-            currentIndex = (currentIndex + direction + total) % total; updateArcPositions();
-        }
-
-        worksContainer?.addEventListener('mouseenter', () => { isHovering = true; lenis.stop(); });
-        worksContainer?.addEventListener('mouseleave', () => { isHovering = false; lenis.start(); });
-        worksContainer?.addEventListener('wheel', (e) => {
-            if (!isHovering) return; e.preventDefault(); e.stopPropagation();
-            if (scrollLocked) return; scrollLocked = true;
-            navigateArc(e.deltaY > 0 ? 1 : -1); setTimeout(() => { scrollLocked = false; }, 400);
-        }, { passive: false });
-
-        let touchStartX = 0;
-        worksContainer?.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
-        worksContainer?.addEventListener('touchend', e => {
-            const touchEndX = e.changedTouches[0].screenX;
-            if (touchStartX - touchEndX > 50) navigateArc(1); if (touchEndX - touchStartX > 50) navigateArc(-1); 
-        }, { passive: true });
-
-        function openModal(work) {
-            if (!work || !cardModal) return;
-            modalTitle.textContent = work.title; modalCat.textContent = work.category || '';
-            modalMedia.innerHTML = work.type === 'video' ? `<video src="${work.url}" controls autoplay></video>` : `<img src="${work.url}" alt="${work.title}">`;
-            cardModal.classList.add('active'); lenis.stop();
-        }
-
-        function closeModal() {
-            if (!cardModal) return;
-            cardModal.classList.remove('active'); lenis.start();
-            const video = modalMedia?.querySelector('video'); if (video) { video.pause(); video.remove(); }
-        }
-
-        if (modalClose) modalClose.addEventListener('click', closeModal);
-        if (cardModal) cardModal.addEventListener('click', (e) => { if (e.target === cardModal) closeModal(); });
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && cardModal?.classList.contains('active')) closeModal(); });
-
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
-                renderArcCards(btn.dataset.filter === 'all' ? works : works.filter(w => w.type === btn.dataset.filter));
-            });
-        });
-
+        // Load Data
         async function loadWorks() {
-            const local = localStorage.getItem('portfolioWorks');
-            if (local) {
-                try {
-                    const data = JSON.parse(local);
-                    if (data?.works?.length > 0) {
-                        works = data.works; renderArcCards(works); refreshFromCDN(); return;
-                    }
-                } catch (e) {}
-            }
-            await refreshFromCDN();
-        }
-        
-        async function refreshFromCDN() {
             try {
                 const rawUrl = 'https://raw.githubusercontent.com/love406680787-cpu/portfolio/main/data/works.json';
                 const res = await fetch(rawUrl + '?t=' + Date.now()); const data = await res.json();
-                works = (data.works || []).map(w => ({
-                    ...w, url: w.url?.replace('https://love406680787-cpu.github.io/portfolio/', 'https://raw.githubusercontent.com/love406680787-cpu/portfolio/main/') || w.url
-                }));
-                localStorage.setItem('portfolioWorks', JSON.stringify({ works, updated: new Date().toISOString() }));
-                renderArcCards(document.querySelector('.filter-btn.active').dataset.filter === 'all' ? works : works.filter(w => w.type === document.querySelector('.filter-btn.active').dataset.filter));
-            } catch (e) {
-                if (arcCarousel) arcCarousel.innerHTML = '<p style="color:var(--muted);padding:40px;text-align:center;width:100%">No works yet</p>';
-            }
+                const items = (data.works || []).slice(0, 4); // Limit to 4 for stack
+                
+                const wrap = document.getElementById('dynamicWorks');
+                if(items.length > 0) {
+                    wrap.innerHTML = items.map(work => `
+                        <div class="stack-card">
+                            <div class="stack-card-img">
+                                ${work.type === 'video' ? `<video src="${work.url}" muted loop autoplay playsinline></video>` : `<img src="${work.url}" alt="${work.title}">`}
+                            </div>
+                            <div class="stack-card-content">
+                                <div class="stack-cat">${work.category || 'Featured'}</div>
+                                <h3 class="stack-title">${work.title}</h3>
+                            </div>
+                        </div>
+                    `).join('');
+                    ScrollTrigger.refresh();
+                    initStackedCards();
+                }
+            } catch (e) { console.error("Works loading error", e); }
         }
 
         loadWorks();
