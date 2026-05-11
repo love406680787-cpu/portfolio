@@ -11,7 +11,8 @@
     // =========================================
     // Config
     // =========================================
-    const API_BASE = 'https://api.github.com';
+    const API_PROXY = '/api/github-proxy';  // Vercel serverless proxy
+    const API_BASE = 'https://api.github.com';  // fallback reference
     const WORKS_FILE = 'data/works.json';
     const DATA_BRANCH = 'main';
 
@@ -84,23 +85,27 @@
     // GitHub API
     // =========================================
     async function githubRequest(method, path, body = null) {
-        const url = `${API_BASE}${path}`;
-        const options = {
+        // Use Vercel proxy to avoid CORS / network issues from browser
+        const proxyBody = {
             method,
+            path,
             headers: {
                 'Authorization': `Bearer ${config.token}`,
-                'Accept': 'application/vnd.github+json',
-                'X-GitHub-Api-Version': '2022-11-28'
-            }
+            },
         };
         if (body) {
-            options.body = JSON.stringify(body);
-            options.headers['Content-Type'] = 'application/json';
+            proxyBody.body = body;
         }
-        const res = await fetch(url, options);
+
+        const res = await fetch(API_PROXY, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(proxyBody),
+        });
+
         if (!res.ok) {
             const err = await res.json().catch(() => ({}));
-            throw new Error(err.message || `HTTP ${res.status}`);
+            throw new Error(err.error || err.message || `HTTP ${res.status}`);
         }
         if (res.status === 204) return null;
         return res.json();
