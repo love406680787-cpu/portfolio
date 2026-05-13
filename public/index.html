@@ -441,8 +441,18 @@
         // Load Data
         async function loadWorks() {
             try {
-                const rawUrl = 'https://raw.githubusercontent.com/love406680787-cpu/portfolio/main/data/works.json';
-                const res = await fetch(rawUrl + '?t=' + Date.now()); const data = await res.json();
+                // Try localStorage first (for admin updates)
+                const localData = localStorage.getItem('portfolioWorks');
+                let data;
+                
+                if (localData) {
+                    data = JSON.parse(localData);
+                } else {
+                    // Fallback to local JSON file
+                    const res = await fetch('data/works.json?t=' + Date.now());
+                    data = await res.json();
+                }
+                
                 const items = (data.works || []).slice(0, 4); // Limit to 4 for stack
                 
                 const wrap = document.getElementById('dynamicWorks');
