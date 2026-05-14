@@ -1,40 +1,100 @@
 {
   "works": [
     {
-      "id": "1776938135976",
-      "title": "Apoem",
-      "description": "",
+      "id": "1776737780594",
+      "title": "Apoem 艾庞",
+      "description": "品牌视觉设计",
       "type": "image",
       "category": "品牌设计",
       "year": "2026",
-      "url": "https://cdn.jsdelivr.net/gh/love406680787-cpu/portfolio@main/images/1776938132069_img_v3_0210n_b469cecd-2bf4-43b1-88a2-2e8ab53f9c1g.jpg",
-      "path": "images/1776938132069_img_v3_0210n_b469cecd-2bf4-43b1-88a2-2e8ab53f9c1g.jpg",
-      "filename": "1776938132069_img_v3_0210n_b469cecd-2bf4-43b1-88a2-2e8ab53f9c1g.jpg",
-      "addedAt": "2026-04-23T09:55:35.976Z"
+      "url": "images/1776737776240_20260130-143336.jpg",
+      "path": "images/1776737776240_20260130-143336.jpg",
+      "filename": "1776737776240_20260130-143336.jpg",
+      "addedAt": "2026-04-21T02:16:20.594Z"
+    },
+    {
+      "id": "1776737727445",
+      "title": "Apoem 品牌",
+      "description": "品牌形象设计",
+      "type": "image",
+      "category": "品牌设计",
+      "year": "2026",
+      "url": "images/1776737721522_20260130-143336.jpg",
+      "path": "images/1776737721522_20260130-143336.jpg",
+      "filename": "1776737721522_20260130-143336.jpg",
+      "addedAt": "2026-04-21T02:15:27.445Z"
+    },
+    {
+      "id": "1776738330934",
+      "title": "Creative Lab",
+      "description": "创意实验室",
+      "type": "image",
+      "category": "视觉设计",
+      "year": "2026",
+      "url": "images/1776738330934_20260130-143336.jpg",
+      "path": "images/1776738330934_20260130-143336.jpg",
+      "filename": "1776738330934_20260130-143336.jpg",
+      "addedAt": "2026-04-21T02:45:30.934Z"
+    },
+    {
+      "id": "1776823631887",
+      "title": "BBlab 品牌形象",
+      "description": "品牌视觉识别系统",
+      "type": "image",
+      "category": "品牌设计",
+      "year": "2026",
+      "url": "images/1776823631887_20260401-102106.jpg",
+      "path": "images/1776823631887_20260401-102106.jpg",
+      "filename": "1776823631887_20260401-102106.jpg",
+      "addedAt": "2026-04-22T02:00:31.887Z"
     },
     {
       "id": "1776823758397",
-      "title": "bblab",
-      "description": "",
+      "title": "BBlab Studio",
+      "description": "工作室品牌设计",
       "type": "image",
       "category": "品牌设计",
       "year": "2026",
-      "url": "https://cdn.jsdelivr.net/gh/love406680787-cpu/portfolio@main/images/1776823755533_20260401-102106.jpg",
+      "url": "images/1776823755533_20260401-102106.jpg",
       "path": "images/1776823755533_20260401-102106.jpg",
       "filename": "1776823755533_20260401-102106.jpg",
       "addedAt": "2026-04-22T02:09:18.397Z"
     },
     {
       "id": "1776820685231",
-      "title": "Apoem",
-      "description": "",
+      "title": "Apoem Collection",
+      "description": "品牌系列产品",
       "type": "image",
       "category": "品牌设计",
       "year": "2026",
-      "url": "https://cdn.jsdelivr.net/gh/love406680787-cpu/portfolio@main/images/1776820681655_20260130-143336.jpg",
+      "url": "images/1776820681655_20260130-143336.jpg",
       "path": "images/1776820681655_20260130-143336.jpg",
       "filename": "1776820681655_20260130-143336.jpg",
       "addedAt": "2026-04-22T01:18:05.231Z"
+    },
+    {
+      "id": "1776938135976",
+      "title": "Apoem Premium",
+      "description": "高端品牌视觉",
+      "type": "image",
+      "category": "品牌设计",
+      "year": "2026",
+      "url": "images/1776938132069_img_v3_0210n_b469cecd-2bf4-43b1-88a2-2e8ab53f9c1g.jpg",
+      "path": "images/1776938132069_img_v3_0210n_b469cecd-2bf4-43b1-88a2-2e8ab53f9c1g.jpg",
+      "filename": "1776938132069_img_v3_0210n_b469cecd-2bf4-43b1-88a2-2e8ab53f9c1g.jpg",
+      "addedAt": "2026-04-23T09:55:35.976Z"
+    },
+    {
+      "id": "1776651720965",
+      "title": "Brand Vision",
+      "description": "品牌视觉规划",
+      "type": "image",
+      "category": "品牌设计",
+      "year": "2026",
+      "url": "images/1776651716252_0317.jpg",
+      "path": "images/1776651716252_0317.jpg",
+      "filename": "1776651716252_0317.jpg",
+      "addedAt": "2026-04-20T02:22:00.965Z"
     }
   ],
   "updated": "2026-04-23T09:55:35.976Z"
