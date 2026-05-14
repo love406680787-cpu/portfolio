@@ -60,6 +60,56 @@
             pointer-events: none;
         }
 
+        /* Preloader */
+        .preloader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preloader-content {
+            text-align: center;
+        }
+
+        .preloader-name {
+            font-family: var(--font-display);
+            font-size: clamp(32px, 6vw, 72px);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 40px;
+        }
+
+        .preloader-name .char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100%);
+        }
+
+        .preloader-bar {
+            width: 200px;
+            height: 1px;
+            background: var(--border);
+            margin: 0 auto 16px;
+            overflow: hidden;
+        }
+
+        .preloader-progress {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+        }
+
+        .preloader-percent {
+            font-family: var(--font-display);
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 0.2em;
+        }
+
         /* Scroll Progress */
         .scroll-progress {
             position: fixed;
@@ -696,6 +746,21 @@
     </style>
 </head>
 <body>
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-name">
+                <span class="char">L</span><span class="char">u</span><span class="char">k</span><span class="char">e</span>
+                <span class="char"> </span>
+                <span class="char">B</span><span class="char">a</span><span class="char">f</span><span class="char">f</span><span class="char">a</span><span class="char">i</span><span class="char">t</span><span class="char">.</span>
+            </div>
+            <div class="preloader-bar">
+                <div class="preloader-progress" id="preloaderProgress"></div>
+            </div>
+            <div class="preloader-percent" id="preloaderPercent">0</div>
+        </div>
+    </div>
+
     <!-- WebGL Canvas -->
     <canvas id="webgl-canvas"></canvas>
 
@@ -1345,9 +1410,59 @@
             }
         });
 
+        // ==================== PRELOADER ANIMATION ====================
+        function initPreloader() {
+            const preloader = document.getElementById('preloader');
+            const progress = document.getElementById('preloaderProgress');
+            const percent = document.getElementById('preloaderPercent');
+            const chars = document.querySelectorAll('.preloader-name .char');
+
+            const tl = gsap.timeline();
+
+            tl.to(chars, {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                stagger: 0.05,
+                ease: 'power3.out'
+            });
+
+            let currentProgress = 0;
+            const duration = 2000;
+            const startTime = Date.now();
+
+            function updateProgress() {
+                const elapsed = Date.now() - startTime;
+                currentProgress = Math.min(100, (elapsed / duration) * 100);
+                
+                progress.style.width = currentProgress + '%';
+                percent.textContent = Math.floor(currentProgress);
+
+                if (currentProgress < 100) {
+                    requestAnimationFrame(updateProgress);
+                } else {
+                    tl.to(preloader, {
+                        opacity: 0,
+                        duration: 0.6,
+                        ease: 'power2.inOut',
+                        onComplete: () => {
+                            preloader.style.display = 'none';
+                        }
+                    });
+                }
+            }
+
+            tl.to({}, {
+                duration: 0.5,
+                onComplete: updateProgress
+            });
+
+            return tl;
+        }
+
         // ==================== INITIALIZE ====================
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize WebGL background
+            initPreloader();
             const webglBackground = new GradientBreathingBackground();
             loadWorks();
         });
