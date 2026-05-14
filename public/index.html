@@ -207,43 +207,48 @@
             height: 600px;
             display: flex;
             align-items: center;
+            perspective: 1200px;
+            overflow: hidden;
         }
 
         .arc-carousel {
+            position: relative;
+            width: 100%;
+            height: 100%;
             display: flex;
-            gap: 24px;
-            padding: 0 48px;
-            cursor: grab;
+            align-items: center;
+            justify-content: center;
+            transform-style: preserve-3d;
         }
 
-        .arc-carousel:active {
-            cursor: grabbing;
+        .arc-carousel-track {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: transform 0.3s ease-out;
         }
 
         .work-card {
-            flex-shrink: 0;
-            width: 380px;
-            height: 500px;
             position: relative;
+            width: 280px;
+            height: 400px;
+            flex-shrink: 0;
             border-radius: 16px;
             overflow: hidden;
             background: var(--bg-card);
             border: 1px solid var(--border);
-            transition: transform 0.6s var(--ease-out-expo), box-shadow 0.6s ease;
-            will-change: transform;
-        }
-
-        .work-card:hover {
-            transform: scale(1.03) translateY(-10px);
-            box-shadow: 0 30px 60px rgba(0, 255, 136, 0.15);
-            border-color: var(--accent);
+            cursor: pointer;
+            transition: all 0.5s var(--ease-out-expo);
+            will-change: transform, opacity, z-index;
+            transform-origin: center center;
         }
 
         .work-card::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.9) 100%);
+            background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.95) 100%);
             z-index: 1;
             pointer-events: none;
         }
@@ -252,11 +257,11 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.8s var(--ease-out-expo);
+            transition: transform 0.6s var(--ease-out-expo);
         }
 
         .work-card:hover img {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         .work-card-content {
@@ -264,17 +269,17 @@
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 32px;
+            padding: 24px;
             z-index: 2;
         }
 
         .work-card-category {
             font-family: var(--font-display);
-            font-size: 10px;
+            font-size: 9px;
             letter-spacing: 0.3em;
             text-transform: uppercase;
             color: var(--accent);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -282,37 +287,38 @@
 
         .work-card-category::before {
             content: '';
-            width: 20px;
+            width: 16px;
             height: 1px;
             background: var(--accent);
         }
 
         .work-card-title {
             font-family: var(--font-display);
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             color: var(--text-primary);
         }
 
         .work-card-desc {
-            font-size: 14px;
+            font-size: 12px;
             color: var(--text-secondary);
+            opacity: 0.8;
         }
 
         .work-card-arrow {
             position: absolute;
-            top: 24px;
-            right: 24px;
-            width: 44px;
-            height: 44px;
+            top: 16px;
+            right: 16px;
+            width: 36px;
+            height: 36px;
             border: 1px solid var(--accent);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transform: translate(20px, -20px);
+            transform: translate(10px, -10px);
             transition: all 0.4s var(--ease-out-expo);
             z-index: 2;
         }
@@ -335,19 +341,70 @@
             stroke: var(--bg-primary);
         }
 
+        /* Active/center card styles */
+        .work-card.active {
+            transform: scale(1.15);
+            box-shadow: 0 40px 80px rgba(0, 255, 136, 0.2);
+            border-color: var(--accent);
+            z-index: 10;
+        }
+
+        .work-card.active::before {
+            background: linear-gradient(180deg, rgba(0,255,136,0.05) 0%, rgba(0,0,0,0.95) 100%);
+        }
+
         /* Card Glow Effect */
         .work-card-glow {
             position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 50% 100%, var(--accent-glow) 0%, transparent 60%);
+            inset: -20px;
+            background: radial-gradient(circle at 50% 50%, var(--accent-glow) 0%, transparent 70%);
             opacity: 0;
             transition: opacity 0.4s ease;
-            z-index: 1;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(30px);
+        }
+
+        .work-card:hover .work-card-glow,
+        .work-card.active .work-card-glow {
+            opacity: 1;
+        }
+
+        /* Carousel Controls */
+        .carousel-controls {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            transform: translateY(-50%);
+            display: flex;
+            justify-content: space-between;
+            padding: 0 32px;
             pointer-events: none;
         }
 
-        .work-card:hover .work-card-glow {
-            opacity: 1;
+        .carousel-prev,
+        .carousel-next {
+            width: 56px;
+            height: 56px;
+            border: 1px solid var(--accent);
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 50%;
+            color: var(--accent);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .carousel-prev:hover,
+        .carousel-next:hover {
+            background: var(--accent);
+            color: var(--bg-primary);
+            box-shadow: 0 0 30px var(--accent-glow);
         }
 
         /* Scroll Indicator */
@@ -619,6 +676,20 @@
         
         <div class="arc-carousel-wrapper">
             <div class="arc-carousel" id="arcCarousel">
+                <div class="arc-carousel-track" id="arcCarouselTrack">
+                </div>
+            </div>
+            <div class="carousel-controls">
+                <button class="carousel-prev" id="carouselPrev">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <button class="carousel-next" id="carouselNext">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 5l7 7-7 7"/>
+                    </svg>
+                </button>
             </div>
         </div>
         
@@ -722,18 +793,21 @@
         });
 
         // Load Works
+        let works = [];
+        let currentIndex = 0;
+
         async function loadWorks() {
             try {
                 const res = await fetch('/data/works.json?t=' + Date.now());
                 const data = await res.json();
-                const works = data.works || [];
+                works = data.works || [];
                 
-                const carousel = document.getElementById('arcCarousel');
+                const track = document.getElementById('arcCarouselTrack');
                 const worksCount = document.getElementById('worksCount');
                 worksCount.textContent = `PORTFOLIO ${works.length}`;
 
                 if (works.length > 0) {
-                    carousel.innerHTML = works.map(work => `
+                    track.innerHTML = works.map(work => `
                         <div class="work-card" data-id="${work.id}">
                             <div class="work-card-glow"></div>
                             <img src="${work.url}" alt="${work.title}" loading="lazy">
@@ -750,135 +824,144 @@
                         </div>
                     `).join('');
 
-                    // Animate cards on load
-                    gsap.from('.work-card', {
-                        opacity: 0,
-                        y: 60,
-                        duration: 0.8,
-                        stagger: 0.15,
-                        ease: 'power3.out',
-                        delay: 0.3
-                    });
-
-                    // Card hover effects
-                    document.querySelectorAll('.work-card').forEach(card => {
-                        card.addEventListener('mouseenter', () => {
-                            gsap.to(card, {
-                                scale: 1.03,
-                                y: -10,
-                                duration: 0.6,
-                                ease: 'power3.out'
-                            });
-                        });
-
-                        card.addEventListener('mouseleave', () => {
-                            gsap.to(card, {
-                                scale: 1,
-                                y: 0,
-                                duration: 0.6,
-                                ease: 'power3.out'
-                            });
-                        });
-                    });
+                    // Initialize arc carousel
+                    initArcCarousel();
                 }
             } catch (e) {
                 console.error('Failed to load works:', e);
             }
         }
 
-        // Arc Carousel Drag Scroll
-        function initCarousel() {
-            const carousel = document.getElementById('arcCarousel');
-            let isDragging = false;
-            let startX, scrollLeft;
-            let velocity = 0;
-            let lastX = 0;
-            let animationId;
+        // Arc Carousel Implementation
+        function initArcCarousel() {
+            const track = document.getElementById('arcCarouselTrack');
+            const cards = track.querySelectorAll('.work-card');
+            const prevBtn = document.getElementById('carouselPrev');
+            const nextBtn = document.getElementById('carouselNext');
 
-            const cardWidth = 404;
-            const gap = 24;
+            if (cards.length === 0) return;
 
-            carousel.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                carousel.style.cursor = 'grabbing';
-                startX = e.pageX;
-                lastX = e.pageX;
-                cancelAnimationFrame(animationId);
-            });
+            const totalCards = cards.length;
+            const arcRadius = 500;
+            const cardWidth = 280;
+            const cardGap = 16;
 
-            carousel.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                e.preventDefault();
+            // Position cards in arc
+            function positionCards() {
+                const centerIndex = currentIndex;
+                const visibleCount = 5;
                 
-                const x = e.pageX;
-                const walk = (x - startX);
-                velocity = x - lastX;
-                lastX = x;
-                
-                carousel.scrollLeft -= walk;
-                startX = x;
-            });
-
-            carousel.addEventListener('mouseup', () => {
-                isDragging = false;
-                carousel.style.cursor = 'grab';
-                applyMomentum();
-            });
-
-            carousel.addEventListener('mouseleave', () => {
-                if (isDragging) {
-                    isDragging = false;
-                    carousel.style.cursor = 'grab';
-                    applyMomentum();
-                }
-            });
-
-            function applyMomentum() {
-                const friction = 0.95;
-                
-                function animate() {
-                    if (Math.abs(velocity) < 0.5) return;
+                cards.forEach((card, index) => {
+                    const offset = index - centerIndex;
+                    const maxOffset = Math.floor(visibleCount / 2);
                     
-                    carousel.scrollLeft -= velocity;
-                    velocity *= friction;
-                    animationId = requestAnimationFrame(animate);
-                }
-                
-                animate();
+                    if (Math.abs(offset) <= maxOffset) {
+                        const angle = (offset / maxOffset) * 0.5;
+                        const x = offset * (cardWidth + cardGap);
+                        const y = Math.sin(angle) * 80;
+                        const scale = 1 - Math.abs(offset) * 0.15;
+                        const opacity = 1 - Math.abs(offset) * 0.25;
+                        const zIndex = maxOffset + 1 - Math.abs(offset);
+
+                        gsap.to(card, {
+                            x: x,
+                            y: y,
+                            scale: scale,
+                            opacity: opacity,
+                            zIndex: zIndex,
+                            duration: 0.6,
+                            ease: 'power3.out'
+                        });
+
+                        card.classList.toggle('active', offset === 0);
+                    } else {
+                        gsap.to(card, {
+                            opacity: 0,
+                            scale: 0.6,
+                            duration: 0.4,
+                            ease: 'power3.out'
+                        });
+                    }
+                });
             }
 
-            // Touch events for mobile
+            // Navigation
+            function goToNext() {
+                currentIndex = (currentIndex + 1) % totalCards;
+                positionCards();
+            }
+
+            function goToPrev() {
+                currentIndex = (currentIndex - 1 + totalCards) % totalCards;
+                positionCards();
+            }
+
+            // Event listeners
+            prevBtn.addEventListener('click', goToPrev);
+            nextBtn.addEventListener('click', goToNext);
+
+            // Touch/swipe support
             let touchStartX = 0;
-            let touchVelocity = 0;
+            let touchEndX = 0;
 
-            carousel.addEventListener('touchstart', (e) => {
-                touchStartX = e.touches[0].pageX;
-                lastX = touchStartX;
-                cancelAnimationFrame(animationId);
+            track.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
             });
 
-            carousel.addEventListener('touchmove', (e) => {
-                const x = e.touches[0].pageX;
-                touchVelocity = x - lastX;
-                lastX = x;
-                carousel.scrollLeft -= touchVelocity;
-            });
-
-            carousel.addEventListener('touchend', () => {
-                velocity = touchVelocity;
-                applyMomentum();
-            });
-
-            // Center cards on scroll into view
-            ScrollTrigger.create({
-                trigger: '.works-section',
-                start: 'top center',
-                end: 'bottom center',
-                onEnter: () => {
-                    if (carousel.scrollLeft === 0) {
-                        carousel.scrollLeft = 100;
+            track.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].clientX;
+                const diff = touchEndX - touchStartX;
+                
+                if (Math.abs(diff) > 50) {
+                    if (diff < 0) {
+                        goToNext();
+                    } else {
+                        goToPrev();
                     }
                 }
+            });
+
+            // Mouse drag
+            let isDragging = false;
+            let startX = 0;
+
+            track.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+            });
+
+            track.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+            });
+
+            track.addEventListener('mouseup', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                
+                const diff = e.clientX - startX;
+                if (Math.abs(diff) > 50) {
+                    if (diff < 0) {
+                        goToNext();
+                    } else {
+                        goToPrev();
+                    }
+                }
+            });
+
+            track.addEventListener('mouseleave', () => {
+                isDragging = false;
+            });
+
+            // Initial positioning
+            positionCards();
+
+            // Card click handler
+            cards.forEach((card, index) => {
+                card.addEventListener('click', () => {
+                    currentIndex = index;
+                    positionCards();
+                });
             });
         }
 
@@ -914,7 +997,6 @@
 
         // Initialize
         loadWorks();
-        initCarousel();
         initStats();
     </script>
 </body>
