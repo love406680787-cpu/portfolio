@@ -933,45 +933,117 @@
                 <h2 class="skills-subtitle">Computer Science student specialized in web development, passionate about design and technology.</h2>
             </div>
             
-            <div class="skills-grid">
-                <div class="skill-card">
-                    <h3 class="skill-card-title">Frontend</h3>
-                    <ul class="skill-list">
-                        <li>HTML / CSS</li>
-                        <li>JavaScript / TypeScript</li>
-                        <li>React / Next.js</li>
-                        <li>GSAP / Lenis</li>
-                    </ul>
+            <div class="skills-accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span class="accordion-icon">+</span>
+                        <span class="accordion-title">Frontend Development</span>
+                        <span class="accordion-count">4 skills</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="accordion-detail">
+                                <span class="skill-tag">HTML / CSS</span>
+                                <p>Semantic markup, responsive design, CSS Grid/Flexbox, animations</p>
+                            </div>
+                            <div class="accordion-detail">
+                                <span class="skill-tag">JavaScript / TypeScript</span>
+                                <p>ES6+, async/await, DOM manipulation, Type safety</p>
+                            </div>
+                            <div class="accordion-detail">
+                                <span class="skill-tag">React / Next.js</span>
+                                <p>Component architecture, state management, SSR/SSG</p>
+                            </div>
+                            <div class="accordion-detail">
+                                <span class="skill-tag">GSAP / Lenis</span>
+                                <p>Scroll animations, smooth scrolling, timeline control</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="skill-card">
-                    <h3 class="skill-card-title">Animation</h3>
-                    <ul class="skill-list">
-                        <li>GSAP</li>
-                        <li>Three.js / WebGL</li>
-                        <li>Lenis Smooth Scroll</li>
-                        <li>Motion Design</li>
-                    </ul>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span class="accordion-icon">+</span>
+                        <span class="accordion-title">Animation & 3D</span>
+                        <span class="accordion-count">4 skills</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="accordion-detail">
+                                <span class="skill-tag">GSAP</span>
+                                <p>ScrollTrigger, timeline animations, morphing SVG</p>
+                            </div>
+                            <div class="accordion-detail">
+                                <span class="skill-tag">Three.js / WebGL</span>
+                                <p>3D rendering, shaders, particle systems</p>
+                            </div>
+                            <div class="accordion-detail">
+                                <span class="skill-tag">Lenis Smooth Scroll</span>
+                                <p>Native-like smooth scrolling experience</p>
+                            </div>
+                            <div class="accordion-detail">
+                                <span class="skill-tag">Motion Design</span>
+                                <p>Principle animations, micro-interactions</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="skill-card">
-                    <h3 class="skill-card-title">Backend</h3>
-                    <ul class="skill-list">
-                        <li>Node.js</li>
-                        <li>Python</li>
-                        <li>Database</li>
-                        <li>API Development</li>
-                    </ul>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span class="accordion-icon">+</span>
+                        <span class="accordion-title">Backend & Database</span>
+                        <span class="accordion-count">4 skills</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="accordion-detail">
+                                <span class="skill-tag">Node.js</span>
+                                <p>Express, API development, server-side logic</p>
+                            </div>
+                            <div class="accordion-detail">
+                                <span class="skill-tag">Python</span>
+                                <p>Django, data processing, automation</p>
+                            </div>
+                            <div class="accordion-detail">
+                                <span class="skill-tag">Database</span>
+                                <p>MongoDB, PostgreSQL, data modeling</p>
+                            </div>
+                            <div class="accordion-detail">
+                                <span class="skill-tag">API Development</span>
+                                <p>REST, GraphQL, authentication</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="skill-card">
-                    <h3 class="skill-card-title">Tools</h3>
-                    <ul class="skill-list">
-                        <li>Figma</li>
-                        <li>Git / GitHub</li>
-                        <li>Docker</li>
-                        <li>Vercel</li>
-                    </ul>
+
+                <div class="accordion-item">
+                    <button class="accordion-header">
+                        <span class="accordion-icon">+</span>
+                        <span class="accordion-title">Tools & DevOps</span>
+                        <span class="accordion-count">4 skills</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="accordion-detail">
+                                <span class="skill-tag">Figma</span>
+                                <p>UI design, prototypes, design systems</p>
+                            </div>
+                            <div class="accordion-detail">
+                                <span class="skill-tag">Git / GitHub</span>
+                                <p>Version control, CI/CD, collaboration</p>
+                            </div>
+                            <div class="accordion-detail">
+                                <span class="skill-tag">Docker</span>
+                                <p>Containerization, deployment workflows</p>
+                            </div>
+                            <div class="accordion-detail">
+                                <span class="skill-tag">Vercel</span>
+                                <p>Frontend deployment, edge functions</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -995,6 +1067,103 @@
                 </svg>
             </a>
         </section>
+
+        <!-- Skills Accordion Styles -->
+        <style>
+            .skills-accordion {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .accordion-item {
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                overflow: hidden;
+                background: var(--bg-card);
+            }
+
+            .accordion-header {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                padding: 24px 32px;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                color: var(--text-primary);
+                text-align: left;
+                transition: background 0.3s ease;
+            }
+
+            .accordion-header:hover {
+                background: rgba(0, 255, 136, 0.03);
+            }
+
+            .accordion-icon {
+                font-size: 20px;
+                font-weight: 300;
+                color: var(--accent);
+                transition: transform 0.3s ease;
+                width: 24px;
+            }
+
+            .accordion-item.active .accordion-icon {
+                transform: rotate(45deg);
+            }
+
+            .accordion-title {
+                font-family: var(--font-display);
+                font-size: 18px;
+                font-weight: 600;
+                flex: 1;
+            }
+
+            .accordion-count {
+                font-family: var(--font-display);
+                font-size: 11px;
+                color: var(--text-muted);
+                letter-spacing: 0.1em;
+            }
+
+            .accordion-content {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .accordion-item.active .accordion-content {
+                max-height: 500px;
+            }
+
+            .accordion-body {
+                padding: 0 32px 24px 72px;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .accordion-detail {
+                padding-left: 16px;
+                border-left: 1px solid var(--border);
+            }
+
+            .skill-tag {
+                display: inline-block;
+                font-family: var(--font-display);
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--accent);
+                margin-bottom: 6px;
+            }
+
+            .accordion-detail p {
+                font-size: 13px;
+                color: var(--text-secondary);
+                line-height: 1.6;
+            }
+        </style>
 
         <!-- Footer -->
         <footer class="footer">
@@ -1473,15 +1642,36 @@
             });
         }
 
+        // ==================== ACCORDION INTERACTION ====================
+        function initAccordion() {
+            const accordionItems = document.querySelectorAll('.accordion-item');
+            
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                
+                header.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    
+                    accordionItems.forEach(otherItem => {
+                        otherItem.classList.remove('active');
+                    });
+                    
+                    if (!isActive) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+        }
+
         // ==================== SKILLS ANIMATION ====================
-        gsap.from('.skill-card', {
+        gsap.from('.accordion-item', {
             opacity: 0,
             y: 40,
             duration: 0.8,
-            stagger: 0.08,
+            stagger: 0.1,
             ease: 'power3.out',
             scrollTrigger: {
-                trigger: '.skills-grid',
+                trigger: '.skills-accordion',
                 start: 'top 80%',
             }
         });
@@ -1551,6 +1741,7 @@
         // ==================== INITIALIZE ====================
         document.addEventListener('DOMContentLoaded', () => {
             initPreloader();
+            initAccordion();
             const webglBackground = new GradientBreathingBackground();
             loadWorks();
         });
