@@ -12,6 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <style>
         :root {
@@ -38,10 +39,6 @@
             height: auto;
         }
 
-        .lenis.lenis-smooth {
-            scroll-behavior: auto;
-        }
-
         body {
             font-family: var(--font-body);
             background: var(--bg-primary);
@@ -50,6 +47,17 @@
             line-height: 1.7;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+        }
+
+        /* WebGL Canvas */
+        #webgl-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
         }
 
         /* Scroll Progress */
@@ -146,6 +154,12 @@
             color: var(--text-primary);
         }
 
+        /* Content wrapper */
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
         /* Hero Section */
         .hero {
             min-height: 100vh;
@@ -177,6 +191,7 @@
             line-height: 1.08;
             letter-spacing: -0.02em;
             margin-bottom: 40px;
+            color: var(--text-primary);
         }
 
         .hero-title .line {
@@ -258,7 +273,19 @@
         /* Works Section */
         .works {
             padding: 0 48px 160px;
-            background: var(--bg-primary);
+            background: transparent;
+            position: relative;
+        }
+
+        .works::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(to bottom, var(--bg-primary), transparent);
+            pointer-events: none;
         }
 
         .works-header {
@@ -399,6 +426,7 @@
         .about {
             padding: 160px 48px;
             background: var(--bg-secondary);
+            position: relative;
         }
 
         .about-content {
@@ -438,7 +466,19 @@
         /* Skills Section */
         .skills {
             padding: 160px 48px;
-            background: var(--bg-primary);
+            background: transparent;
+            position: relative;
+        }
+
+        .skills::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(to bottom, var(--bg-secondary), transparent);
+            pointer-events: none;
         }
 
         .skills-header {
@@ -653,6 +693,9 @@
     </style>
 </head>
 <body>
+    <!-- WebGL Canvas -->
+    <canvas id="webgl-canvas"></canvas>
+
     <!-- Scroll Progress -->
     <div class="scroll-progress" id="scrollProgress"></div>
 
@@ -672,141 +715,413 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-label">Creative Developer</div>
-            <h1 class="hero-title">
-                <span class="line"><span class="word">Quiet creator,</span></span>
-                <span class="line"><span class="word">bringing ideas</span></span>
-                <span class="line"><span class="word">to <span class="accent">life.</span></span></span>
-            </h1>
-            <p class="hero-description">
-                Creative developer passionate about web development, animation and interactive design. 
-                I craft memorable digital experiences, always seeking the symbiosis between art and information.
+    <!-- Content -->
+    <div class="content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-label">Creative Developer</div>
+                <h1 class="hero-title">
+                    <span class="line"><span class="word">Quiet creator,</span></span>
+                    <span class="line"><span class="word">bringing ideas</span></span>
+                    <span class="line"><span class="word">to <span class="accent">life.</span></span></span>
+                </h1>
+                <p class="hero-description">
+                    Creative developer passionate about web development, animation and interactive design. 
+                    I craft memorable digital experiences, always seeking the symbiosis between art and information.
+                </p>
+                <a href="#works" class="hero-cta">
+                    <span>See Projects</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 17L17 7M17 7H7M17 7v10"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="hero-scroll">
+                <div class="hero-scroll-line"></div>
+                <span>SCROLL</span>
+            </div>
+            <div class="hero-version">V3.0</div>
+        </section>
+
+        <!-- Works Section -->
+        <section class="works" id="works">
+            <div class="works-header">
+                <div class="works-title">Selected Works</div>
+                <h2 class="works-subtitle">Each project is a chance to learn, experiment and push my limits.</h2>
+            </div>
+            
+            <div class="works-grid" id="worksGrid"></div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about" id="about">
+            <div class="about-content">
+                <div class="about-label">About</div>
+                <p class="about-text">
+                    My name is Luke. A passionate <span class="accent">creative developer</span> and computer science student, 
+                    I build memorable digital experiences, always seeking the symbiosis between 
+                    <span class="accent">art and information</span>.
+                </p>
+                <p class="about-description">
+                    As a creative developer, I craft tailor-made web experiences, blending technical precision and emotion.
+                    Specialized in web development, animation and interactive design.
+                </p>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section class="skills" id="skills">
+            <div class="skills-header">
+                <div class="skills-title">Expertise</div>
+                <h2 class="skills-subtitle">Computer Science student specialized in web development, passionate about design and technology.</h2>
+            </div>
+            
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <h3 class="skill-card-title">Frontend</h3>
+                    <ul class="skill-list">
+                        <li>HTML / CSS</li>
+                        <li>JavaScript / TypeScript</li>
+                        <li>React / Next.js</li>
+                        <li>GSAP / Lenis</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-card">
+                    <h3 class="skill-card-title">Animation</h3>
+                    <ul class="skill-list">
+                        <li>GSAP</li>
+                        <li>Three.js / WebGL</li>
+                        <li>Lenis Smooth Scroll</li>
+                        <li>Motion Design</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-card">
+                    <h3 class="skill-card-title">Backend</h3>
+                    <ul class="skill-list">
+                        <li>Node.js</li>
+                        <li>Python</li>
+                        <li>Database</li>
+                        <li>API Development</li>
+                    </ul>
+                </div>
+                
+                <div class="skill-card">
+                    <h3 class="skill-card-title">Tools</h3>
+                    <ul class="skill-list">
+                        <li>Figma</li>
+                        <li>Git / GitHub</li>
+                        <li>Docker</li>
+                        <li>Vercel</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact" id="contact">
+            <div class="contact-header">
+                <div class="contact-title">Contact</div>
+                <h2 class="contact-heading">Let's build <span class="accent">something</span><br>amazing together</h2>
+            </div>
+            
+            <p class="contact-text">
+                Available for freelance projects and exciting collaborations worldwide.
+                Eager to join an innovative team and contribute to ambitious projects.
             </p>
-            <a href="#works" class="hero-cta">
-                <span>See Projects</span>
+            
+            <a href="mailto:luke.baffait@yahoo.com" class="contact-email">
+                <span>Contact me</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M7 17L17 7M17 7H7M17 7v10"/>
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
             </a>
-        </div>
-        <div class="hero-scroll">
-            <div class="hero-scroll-line"></div>
-            <span>SCROLL</span>
-        </div>
-        <div class="hero-version">V3.0</div>
-    </section>
+        </section>
 
-    <!-- Works Section -->
-    <section class="works" id="works">
-        <div class="works-header">
-            <div class="works-title">Selected Works</div>
-            <h2 class="works-subtitle">Each project is a chance to learn, experiment and push my limits.</h2>
-        </div>
-        
-        <div class="works-grid" id="worksGrid"></div>
-    </section>
-
-    <!-- About Section -->
-    <section class="about" id="about">
-        <div class="about-content">
-            <div class="about-label">About</div>
-            <p class="about-text">
-                My name is Luke. A passionate <span class="accent">creative developer</span> and computer science student, 
-                I build memorable digital experiences, always seeking the symbiosis between 
-                <span class="accent">art and information</span>.
-            </p>
-            <p class="about-description">
-                As a creative developer, I craft tailor-made web experiences, blending technical precision and emotion.
-                Specialized in web development, animation and interactive design.
-            </p>
-        </div>
-    </section>
-
-    <!-- Skills Section -->
-    <section class="skills" id="skills">
-        <div class="skills-header">
-            <div class="skills-title">Expertise</div>
-            <h2 class="skills-subtitle">Computer Science student specialized in web development, passionate about design and technology.</h2>
-        </div>
-        
-        <div class="skills-grid">
-            <div class="skill-card">
-                <h3 class="skill-card-title">Frontend</h3>
-                <ul class="skill-list">
-                    <li>HTML / CSS</li>
-                    <li>JavaScript / TypeScript</li>
-                    <li>React / Next.js</li>
-                    <li>GSAP / Lenis</li>
-                </ul>
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-copy">© 2026 Luke Baffait. All rights reserved.</div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">GitHub</a>
+                <a href="#" class="footer-link">LinkedIn</a>
+                <a href="#" class="footer-link">Dribbble</a>
             </div>
+        </footer>
+    </div>
+
+    <!-- WebGL Shaders -->
+    <script id="vertexShader" type="x-shader/x-vertex">
+        varying vec2 vUv;
+        void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+    </script>
+
+    <script id="fragmentShader" type="x-shader/x-fragment">
+        precision highp float;
+        
+        uniform float u_time;
+        uniform vec2 u_mouse;
+        uniform vec2 u_resolution;
+        
+        varying vec2 vUv;
+        
+        // Simplex noise function
+        vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+        vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+        vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
+        
+        float snoise(vec2 v) {
+            const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+                               -0.577350269189626, 0.024390243902439);
+            vec2 i  = floor(v + dot(v, C.yy));
+            vec2 x0 = v -   i + dot(i, C.xx);
+            vec2 i1;
+            i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+            vec4 x12 = x0.xyxy + C.xxzz;
+            x12.xy -= i1;
+            i = mod289(i);
+            vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0))
+                + i.x + vec3(0.0, i1.x, 1.0));
+            vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+                dot(x12.zw,x12.zw)), 0.0);
+            m = m*m;
+            m = m*m;
+            vec3 x = 2.0 * fract(p * C.www) - 1.0;
+            vec3 h = abs(x) - 0.5;
+            vec3 ox = floor(x + 0.5);
+            vec3 a0 = x - ox;
+            m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
+            vec3 g;
+            g.x  = a0.x  * x0.x  + h.x  * x0.y;
+            g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+            return 130.0 * dot(m, g);
+        }
+        
+        void main() {
+            vec2 uv = vUv;
+            vec2 aspect = vec2(u_resolution.x / u_resolution.y, 1.0);
             
-            <div class="skill-card">
-                <h3 class="skill-card-title">Animation</h3>
-                <ul class="skill-list">
-                    <li>GSAP</li>
-                    <li>Three.js / WebGL</li>
-                    <li>Lenis Smooth Scroll</li>
-                    <li>Motion Design</li>
-                </ul>
-            </div>
+            // Mouse influence
+            vec2 mouse = u_mouse / u_resolution;
+            float mouseInfluence = smoothstep(0.5, 0.0, distance(uv, mouse * aspect));
             
-            <div class="skill-card">
-                <h3 class="skill-card-title">Backend</h3>
-                <ul class="skill-list">
-                    <li>Node.js</li>
-                    <li>Python</li>
-                    <li>Database</li>
-                    <li>API Development</li>
-                </ul>
-            </div>
+            // Time-based animation
+            float time = u_time * 0.3;
             
-            <div class="skill-card">
-                <h3 class="skill-card-title">Tools</h3>
-                <ul class="skill-list">
-                    <li>Figma</li>
-                    <li>Git / GitHub</li>
-                    <li>Docker</li>
-                    <li>Vercel</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section class="contact" id="contact">
-        <div class="contact-header">
-            <div class="contact-title">Contact</div>
-            <h2 class="contact-heading">Let's build <span class="accent">something</span><br>amazing together</h2>
-        </div>
-        
-        <p class="contact-text">
-            Available for freelance projects and exciting collaborations worldwide.
-            Eager to join an innovative team and contribute to ambitious projects.
-        </p>
-        
-        <a href="mailto:luke.baffait@yahoo.com" class="contact-email">
-            <span>Contact me</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-        </a>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-copy">© 2026 Luke Baffait. All rights reserved.</div>
-        <div class="footer-links">
-            <a href="#" class="footer-link">GitHub</a>
-            <a href="#" class="footer-link">LinkedIn</a>
-            <a href="#" class="footer-link">Dribbble</a>
-        </div>
-    </footer>
+            // Multiple noise layers for organic movement
+            float noise1 = snoise(uv * 2.0 + time * 0.5);
+            float noise2 = snoise(uv * 3.0 - time * 0.3);
+            float noise3 = snoise(uv * 5.0 + time * 0.2);
+            
+            // Combined noise
+            float noise = noise1 * 0.5 + noise2 * 0.3 + noise3 * 0.2;
+            
+            // Color palette - dark theme with accent
+            vec3 color1 = vec3(0.02, 0.02, 0.03); // Near black
+            vec3 color2 = vec3(0.04, 0.05, 0.06); // Dark gray
+            vec3 color3 = vec3(0.0, 0.15, 0.1);  // Dark green tint
+            vec3 accent = vec3(0.0, 0.3, 0.2);   // Green accent
+            
+            // Mix colors based on noise
+            vec3 color = mix(color1, color2, noise * 0.5 + 0.5);
+            
+            // Add accent color in certain areas
+            float accentMix = smoothstep(0.3, 0.7, noise + mouseInfluence * 0.3);
+            color = mix(color, accent, accentMix * 0.15);
+            
+            // Breathing effect - subtle pulse
+            float breathe = sin(u_time * 0.5) * 0.02 + 1.0;
+            color *= breathe;
+            
+            // Vignette
+            float vignette = 1.0 - smoothstep(0.4, 1.5, distance(uv, vec2(0.5)));
+            color *= vignette * 0.8 + 0.2;
+            
+            // Mouse glow effect
+            float glow = mouseInfluence * 0.15;
+            color += accent * glow;
+            
+            // Subtle grain
+            float grain = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
+            color += (grain - 0.5) * 0.02;
+            
+            gl_FragColor = vec4(color, 1.0);
+        }
+    </script>
 
     <script>
-        gsap.registerPlugin(ScrollTrigger);
+        // ==================== WEBGL BACKGROUND ====================
+        class GradientBreathingBackground {
+            constructor() {
+                this.canvas = document.getElementById('webgl-canvas');
+                this.gl = this.canvas.getContext('webgl') || this.canvas.getContext('experimental-webgl');
+                
+                if (!this.gl) {
+                    console.log('WebGL not supported, using fallback');
+                    this.fallbackMode = true;
+                    this.initFallback();
+                    return;
+                }
+                
+                this.mouse = { x: 0, y: 0 };
+                this.time = 0;
+                
+                this.init();
+                this.bindEvents();
+                this.animate();
+            }
+            
+            init() {
+                const gl = this.gl;
+                
+                // Vertex shader
+                const vertexShaderSource = document.getElementById('vertexShader').textContent;
+                const vertexShader = this.createShader(gl.VERTEX_SHADER, vertexShaderSource);
+                
+                // Fragment shader
+                const fragmentShaderSource = document.getElementById('fragmentShader').textContent;
+                const fragmentShader = this.createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+                
+                // Program
+                this.program = gl.createProgram();
+                gl.attachShader(this.program, vertexShader);
+                gl.attachShader(this.program, fragmentShader);
+                gl.linkProgram(this.program);
+                
+                if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
+                    console.error('Program link error:', gl.getProgramInfoLog(this.program));
+                    return;
+                }
+                
+                gl.useProgram(this.program);
+                
+                // Geometry
+                const positions = new Float32Array([
+                    -1, -1,
+                     1, -1,
+                    -1,  1,
+                     1,  1
+                ]);
+                
+                const positionBuffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+                
+                const positionLocation = gl.getAttribLocation(this.program, 'position');
+                gl.enableVertexAttribArray(positionLocation);
+                gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+                
+                // Uniforms
+                this.uniforms = {
+                    u_time: gl.getUniformLocation(this.program, 'u_time'),
+                    u_mouse: gl.getUniformLocation(this.program, 'u_mouse'),
+                    u_resolution: gl.getUniformLocation(this.program, 'u_resolution')
+                };
+                
+                this.resize();
+            }
+            
+            createShader(type, source) {
+                const gl = this.gl;
+                const shader = gl.createShader(type);
+                gl.shaderSource(shader, source);
+                gl.compileShader(shader);
+                
+                if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                    console.error('Shader compile error:', gl.getShaderInfoLog(shader));
+                    gl.deleteShader(shader);
+                    return null;
+                }
+                
+                return shader;
+            }
+            
+            bindEvents() {
+                window.addEventListener('resize', () => this.resize());
+                
+                window.addEventListener('mousemove', (e) => {
+                    this.mouse.x = e.clientX;
+                    this.mouse.y = this.canvas.height - e.clientY;
+                });
+            }
+            
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+            }
+            
+            animate() {
+                this.time += 0.016;
+                
+                const gl = this.gl;
+                gl.uniform1f(this.uniforms.u_time, this.time);
+                gl.uniform2f(this.uniforms.u_mouse, this.mouse.x, this.mouse.y);
+                gl.uniform2f(this.uniforms.u_resolution, this.canvas.width, this.canvas.height);
+                
+                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+                
+                requestAnimationFrame(() => this.animate());
+            }
+            
+            initFallback() {
+                const canvas = this.canvas;
+                const ctx = canvas.getContext('2d');
+                this.ctx = ctx;
+                this.resize();
+                
+                window.addEventListener('resize', () => this.resize());
+                window.addEventListener('mousemove', (e) => {
+                    this.mouse.x = e.clientX;
+                    this.mouse.y = e.clientY;
+                });
+                
+                this.animateFallback();
+            }
+            
+            animateFallback() {
+                const { canvas, ctx, mouse } = this;
+                const time = Date.now() * 0.001;
+                
+                ctx.fillStyle = '#0a0a0a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Breathing gradient circles
+                for (let i = 0; i < 3; i++) {
+                    const x = canvas.width / 2 + Math.sin(time * 0.3 + i) * 100;
+                    const y = canvas.height / 2 + Math.cos(time * 0.2 + i) * 100;
+                    const radius = 200 + Math.sin(time * 0.5 + i * 2) * 50;
+                    
+                    const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+                    gradient.addColorStop(0, 'rgba(0, 255, 136, 0.08)');
+                    gradient.addColorStop(1, 'rgba(0, 255, 136, 0)');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // Mouse glow
+                const glowGradient = ctx.createRadialGradient(
+                    mouse.x, mouse.y, 0,
+                    mouse.x, mouse.y, 200
+                );
+                glowGradient.addColorStop(0, 'rgba(0, 255, 136, 0.1)');
+                glowGradient.addColorStop(1, 'rgba(0, 255, 136, 0)');
+                ctx.fillStyle = glowGradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                requestAnimationFrame(() => this.animateFallback());
+            }
+        }
+
+        // Initialize WebGL background
+        const webglBackground = new GradientBreathingBackground();
 
         // ==================== LENIS SMOOTH SCROLL ====================
         const lenis = new Lenis({
@@ -825,9 +1140,6 @@
 
         // ==================== CUSTOM CURSOR ====================
         const cursor = document.getElementById('cursor');
-        const cursorDot = cursor.querySelector('.cursor-dot');
-        const cursorRing = cursor.querySelector('.cursor-ring');
-
         let mouseX = window.innerWidth / 2;
         let mouseY = window.innerHeight / 2;
         let cursorX = mouseX;
