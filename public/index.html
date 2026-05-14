@@ -34,8 +34,75 @@
             box-sizing: border-box;
         }
 
+        /* Scroll Progress */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: var(--accent);
+            z-index: 1002;
+            pointer-events: none;
+        }
+
+        /* Mouse Glow */
+        .mouse-glow {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(80px);
+            opacity: 0.5;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor-ring {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.6;
+            transition: all 0.2s ease-out;
+        }
+
+        .cursor.hover .cursor-ring {
+            width: 50px;
+            height: 50px;
+            opacity: 1;
+            border-color: var(--accent);
+        }
+
         html {
             scroll-behavior: smooth;
+        }
+
+        /* Hide default cursor on desktop */
+        @media (pointer: fine) {
+            body {
+                cursor: none;
+            }
         }
 
         body {
@@ -60,6 +127,11 @@
             align-items: center;
             z-index: 1000;
             mix-blend-mode: difference;
+            transition: transform 0.4s ease;
+        }
+
+        .nav.hidden {
+            transform: translateY(-100%);
         }
 
         .nav-logo {
@@ -505,6 +577,18 @@
     </style>
 </head>
 <body>
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <!-- Mouse Glow -->
+    <div class="mouse-glow" id="mouseGlow"></div>
+    
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor">
+        <div class="cursor-dot"></div>
+        <div class="cursor-ring"></div>
+    </div>
+
     <nav class="nav">
         <a href="#" class="nav-logo">Luke Baffait</a>
         <div class="nav-links">
@@ -642,7 +726,7 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // Lenis Smooth Scroll
+        // ==================== 1. LENIS SMOOTH SCROLL ====================
         const lenis = new Lenis({
             duration: 1.2,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -658,7 +742,90 @@
 
         gsap.ticker.lagSmoothing(0);
 
-        // Hero Animation
+        // ==================== 2. CUSTOM CURSOR ====================
+        const cursor = document.getElementById('cursor');
+        const cursorDot = cursor.querySelector('.cursor-dot');
+        const cursorRing = cursor.querySelector('.cursor-ring');
+
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let cursorX = mouseX;
+        let cursorY = mouseY;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            // Smooth follow for main cursor
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+            
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Hover effect for interactive elements
+        const interactiveElements = document.querySelectorAll('a, button, .work-card, .skill-group, .hero-cta, .contact-email, .nav-link');
+        interactiveElements.forEach(elem => {
+            elem.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            elem.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // ==================== 3. MOUSE GLOW ====================
+        const mouseGlow = document.getElementById('mouseGlow');
+        let glowX = window.innerWidth / 2;
+        let glowY = window.innerHeight / 2;
+        let currentGlowX = glowX;
+        let currentGlowY = glowY;
+
+        document.addEventListener('mousemove', (e) => {
+            glowX = e.clientX;
+            glowY = e.clientY;
+        });
+
+        function animateGlow() {
+            currentGlowX += (glowX - currentGlowX) * 0.1;
+            currentGlowY += (glowY - currentGlowY) * 0.1;
+            
+            mouseGlow.style.left = currentGlowX + 'px';
+            mouseGlow.style.top = currentGlowY + 'px';
+            
+            requestAnimationFrame(animateGlow);
+        }
+        animateGlow();
+
+        // ==================== 4. SCROLL PROGRESS ====================
+        const scrollProgress = document.getElementById('scrollProgress');
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            scrollProgress.style.width = progress + '%';
+        });
+
+        // ==================== 5. NAV HIDE ON SCROLL ====================
+        const nav = document.querySelector('.nav');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            
+            if (currentScroll > lastScroll && currentScroll > 100) {
+                nav.classList.add('hidden');
+            } else {
+                nav.classList.remove('hidden');
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // ==================== 6. HERO ANIMATIONS ====================
         gsap.from('.hero-title .word', {
             y: '100%',
             duration: 1.2,
@@ -683,7 +850,14 @@
             ease: 'power3.out'
         });
 
-        // Section Animations
+        gsap.from('.hero-scroll', {
+            opacity: 0,
+            duration: 1,
+            delay: 1,
+            ease: 'power3.out'
+        });
+
+        // ==================== 7. SECTION ANIMATIONS ====================
         gsap.utils.toArray('.section').forEach(section => {
             gsap.from(section.querySelectorAll('.section-label, .section-title'), {
                 opacity: 0,
@@ -698,7 +872,7 @@
             });
         });
 
-        // Load Works
+        // ==================== 8. LOAD WORKS ====================
         async function loadWorks() {
             try {
                 const res = await fetch('/data/works.json?t=' + Date.now());
@@ -709,7 +883,7 @@
 
                 if (works.length > 0) {
                     grid.innerHTML = works.map(work => `
-                        <div class="work-card">
+                        <div class="work-card" data-tilt>
                             <img src="${work.url}" alt="${work.title}" loading="lazy">
                             <div class="work-card-overlay"></div>
                             <div class="work-card-content">
@@ -737,13 +911,45 @@
                             start: 'top 80%',
                         }
                     });
+
+                    // Add cursor hover to new cards
+                    document.querySelectorAll('.work-card').forEach(card => {
+                        card.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+                        card.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+                    });
+
+                    // 3D Tilt Effect
+                    init3DTilt();
                 }
             } catch (e) {
                 console.error('Failed to load works:', e);
             }
         }
 
-        // Skills Animation
+        // ==================== 9. 3D TILT EFFECT ====================
+        function init3DTilt() {
+            const cards = document.querySelectorAll('.work-card[data-tilt]');
+            
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = (y - centerY) / 20;
+                    const rotateY = (centerX - x) / 20;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+                });
+            });
+        }
+
+        // ==================== 10. SKILLS ANIMATION ====================
         gsap.from('.skill-group', {
             opacity: 0,
             y: 40,
@@ -756,7 +962,7 @@
             }
         });
 
-        // Contact Animation
+        // ==================== 11. CONTACT ANIMATION ====================
         gsap.from('.contact-content > *', {
             opacity: 0,
             y: 40,
@@ -769,7 +975,7 @@
             }
         });
 
-        // Initialize
+        // ==================== INITIALIZE ====================
         loadWorks();
     </script>
 </body>
