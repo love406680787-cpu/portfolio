@@ -213,6 +213,60 @@
             z-index: 1;
         }
 
+        /* Marquee Section */
+        .marquee {
+            padding: 60px 0;
+            overflow: hidden;
+            background: transparent;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .marquee-track {
+            display: flex;
+            width: fit-content;
+            animation: marquee 30s linear infinite;
+        }
+
+        .marquee:hover .marquee-track {
+            animation-play-state: paused;
+        }
+
+        .marquee-content {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .marquee-item {
+            font-family: var(--font-display);
+            font-size: clamp(24px, 3vw, 36px);
+            font-weight: 600;
+            white-space: nowrap;
+            padding: 0 24px;
+            color: var(--text-primary);
+            transition: color 0.3s ease;
+        }
+
+        .marquee-item:hover {
+            color: var(--accent);
+        }
+
+        .marquee-separator {
+            font-size: 12px;
+            color: var(--accent);
+            padding: 0 8px;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
         /* Hero Section */
         .hero {
             min-height: 100vh;
@@ -810,6 +864,40 @@
                 <span>SCROLL</span>
             </div>
             <div class="hero-version">V3.0</div>
+        </section>
+
+        <!-- Marquee Section -->
+        <section class="marquee">
+            <div class="marquee-track">
+                <div class="marquee-content">
+                    <span class="marquee-item">Creative Development</span>
+                    <span class="marquee-separator">✦</span>
+                    <span class="marquee-item">Web Animation</span>
+                    <span class="marquee-separator">✦</span>
+                    <span class="marquee-item">Interactive Design</span>
+                    <span class="marquee-separator">✦</span>
+                    <span class="marquee-item">Visual Experience</span>
+                    <span class="marquee-separator">✦</span>
+                    <span class="marquee-item">Digital Craft</span>
+                    <span class="marquee-separator">✦</span>
+                    <span class="marquee-item">Frontend Engineering</span>
+                    <span class="marquee-separator">✦</span>
+                </div>
+                <div class="marquee-content" aria-hidden="true">
+                    <span class="marquee-item">Creative Development</span>
+                    <span class="marquee-separator">✦</span>
+                    <span class="marquee-item">Web Animation</span>
+                    <span class="marquee-separator">✦</span>
+                    <span class="marquee-item">Interactive Design</span>
+                    <span class="marquee-separator">✦</span>
+                    <span class="marquee-item">Visual Experience</span>
+                    <span class="marquee-separator">✦</span>
+                    <span class="marquee-item">Digital Craft</span>
+                    <span class="marquee-separator">✦</span>
+                    <span class="marquee-item">Frontend Engineering</span>
+                    <span class="marquee-separator">✦</span>
+                </div>
+            </div>
         </section>
 
         <!-- Works Section -->
